@@ -1,0 +1,179 @@
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+const express = require('express');
+const mysql = require('mysql');
+const config = require('./config.js');
+const db = require('./db_access');
+const connection = mysql.createConnection(config);
+
+const cookieParser = require('cookie-parser');
+const { hashPassword, validatePassword } = require('./hashPassword');
+
+const app = express();
+const port = 3000;
+
+app.use(cookieParser());
+
+connection.connect((error) => {
+    if (error) {
+        console.error('Error connecting to database: ', error);
+    } else {
+        console.log('Connected to database.');
+    }
+});
+
+// ---------------------- MIDDLEWARE for SessionID ---------------------
+
+function authenticateUser(req, res, next) {
+
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getCookie(connection, sessionIdCookie, (error, user) => {
+        if (error) {
+            res.status(500).send('Could not get Cookie on Serverside');
+            res.redirect('./formulare/login_form.html');
+        } else {
+            if (sessionIdCookie === user.cookie) {
+                next();
+            } else {
+                res.status(401).send('Unauthorized');
+                res.redirect('./formulare/login_form.html');
+            }
+        }
+    });
+}
+
+
+// -----------------------------------------------------------------------
+
+
+app.post('/formulare/register', express.json(), (req, res) => {
+    let { email, password } = req.body;
+
+    const { salt, hashedPassword } = hashPassword(password);
+    password = hashedPassword;
+
+    // Generieren einer zufälligen Session-ID
+    const cookie = crypto.randomBytes(8).toString('hex');
+
+
+    db.createUser(connection, email, password, cookie, salt, (error, userId) => {
+        if (error) {
+            res.status(500).send(error.message);
+        } else {
+            res.status(201).json({ id: userId });
+        }
+    });
+});
+
+app.post('/formulare/login', express.json(), (req, res) => {
+    let { email, password } = req.body;
+
+    // Generieren einer zufälligen Session-ID
+    const newCookie = crypto.randomBytes(8).toString('hex');
+
+
+    db.getUser(connection, email, (error, user) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+        } else {
+            if(email == user.email) {
+                if (validatePassword(password, user.password, user.salt)) {
+
+                    db.setCookie(connection, email, newCookie, (error) => {
+                        if (error) {
+                            console.error(error);
+                        } else {
+                            console.log('Cookie updated successfully!');
+                        }
+                    });
+
+                    res.setHeader('Set-Cookie', `session_id=${newCookie}; HttpOnly; SameSite=Strict; path=/`);
+
+
+                    // Senden einer Antwort mit der Session-ID
+                    res.writeHead(200, {'Content-Type': 'text/plain'});
+                    console.log(res.headers);
+                    res.end(`Session-ID ${newCookie} generiert`);
+                }
+            }
+        }
+
+    });
+});
+
+
+
+
+app.get('/user_auth', authenticateUser, (req, res) => {
+    //const cookies = req.headers.cookie ? req.headers.cookie.split('; ') : [];
+
+    // Suchen des session_id-Cookies
+    //const sessionIdCookie = "6c172e1a9814d7d2";
+        //const sessionIdCookie = cookies.find(cookie => cookie.startsWith('session_id='));
+
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getCookie(connection, sessionIdCookie, (error, user) => {
+            if (error) {
+                console.error("An error occurred while retrieving the user:", error);
+                res.status(500);
+            } else {
+                res.status(200).json({ email: user.email });
+            }
+        });
+});
+
+app.get('/search_recipes', authenticateUser, (req, res) => {
+    const ingredients = req.query.ingredients;
+    const category = req.query.category;
+    res.status(200).json({ recipe: "dummy" });
+});
+
+
+app.get('*', (req, res) => {
+    let filePath = '.' + req.url;
+    if (filePath == './') {
+        filePath = './index.html';
+    }
+
+    const extname = String(path.extname(filePath)).toLowerCase();
+    const mimeTypes = {
+        '.html': 'text/html',
+        '.js': 'text/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpg',
+        '.gif': 'image/gif',
+        '.wav': 'audio/wav',
+        '.mp4': 'video/mp4',
+        '.woff': 'application/font-woff',
+        '.ttf': 'application/font-ttf',
+        '.eot': 'application/vnd.ms-fontobject',
+        '.otf': 'application/font-otf',
+        '.svg': 'application/image/svg+xml'
+    };
+    const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+    fs.readFile(filePath, (err, content) => {
+        if (err) {
+            if (err.code == 'ENOENT') {
+                res.status(404).send('404 Not Found');
+            } else {
+                res.status(500).send('500 Internal Server Error');
+            }
+        } else {
+            res.status(200).type(contentType).send(content);
+        }
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
+
+module.exports = connection;

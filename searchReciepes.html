@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Reciepes!</title>
+</head>
+<body>
+
+<div>User: <span id="currentUser"></span></div>
+
+<form>
+    <label for="ingredients">Ingredients:</label>
+    <input type="text" id="ingredients" name="ingredients" pattern="[A-Za-z0-9]+(,[A-Za-z0-9]+)*" placeholder="Enter ingredients separated by commas">
+
+    <label for="category">Category:</label>
+    <select id="category" name="category">
+        <option value="all">All</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+    </select>
+
+    <input type="submit" value="Submit">
+</form>
+
+
+<script>
+
+
+    //------------------------------------------------------------
+
+
+
+    //------------------------------------------------------------
+
+    fetch('/user_auth', {
+        method: 'GET',
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
+            }
+        })
+        .then(res_data => {
+            const email = res_data.email;
+            const currentUser = document.getElementById("currentUser");
+            currentUser.textContent = email;
+
+            //------------------------------------------------------------------------
+
+            // Fügen Sie hier den zweiten fetch-Aufruf hinzu:
+            const ingredients = document.getElementById('ingredients').value;
+            const category = document.getElementById('category').value;
+            const params = new URLSearchParams();
+            params.append('ingredients', ingredients);
+            params.append('category', category);
+
+            fetch(`/search_recipes?${params.toString()}`, {
+                method: 'GET',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Fehler beim Abrufen von Rezepten');
+                    }
+                })
+                .then(recipe_data => {
+                    // Verarbeiten Sie hier die zurückgegebenen Rezeptdaten
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+
+</script>
+
+</body>
+</html>

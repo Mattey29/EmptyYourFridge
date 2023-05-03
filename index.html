@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Willkommen</title>
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 36px;
+            color: #333333;
+        }
+
+        a, button {
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #428bca;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: none; /* Neue Regel, um die Umrandung zu entfernen */
+        }
+
+        a:focus, button:focus {
+            outline: none; /* Neue Regel, um den Focus-Rahmen zu entfernen */
+        }
+
+        a::before, button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            background-color: #3071a9;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        a:hover::before, button:hover::before {
+            transform: scaleX(1);
+        }
+
+        a span, button span {
+            position: relative;
+            z-index: 1;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Willkommen auf unserer Website</h1>
+
+<a href="formulare/register_form.html"><span>Registrieren</span></a>
+<button onclick="location.href='formulare/login_form.html'"><span>Anmelden</span></button>
+
+</body>
+</html>
