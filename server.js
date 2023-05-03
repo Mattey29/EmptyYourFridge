@@ -59,13 +59,25 @@ app.post('/formulare/register', express.json(), (req, res) => {
     // Generieren einer zufälligen Session-ID
     const cookie = crypto.randomBytes(8).toString('hex');
 
-
-    db.createUser(connection, email, password, cookie, salt, (error, userId) => {
+    const selectQuery = `SELECT id FROM user WHERE email = ?`;
+    connection.query(selectQuery, [email], (error, results) => {
         if (error) {
-            res.status(500).send(error.message);
-        } else {
-            res.status(201).json({ id: userId });
+            return res.status(500).send({ message: error.message });
         }
+
+        if (results.length > 0) {
+            // Wenn ein Benutzer gefunden wird, senden Sie eine Fehlermeldung zurück
+            return res.status(409).send({ message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits' });
+        } else {
+            db.createUser(connection, email, password, cookie, salt, (error, userId) => {
+                if (error) {
+                    res.status(500).send(error.message);
+                } else {
+                    res.status(201).json({ id: userId });
+                }
+            });
+        }
+
     });
 });
 
