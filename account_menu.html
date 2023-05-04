@@ -36,6 +36,11 @@
             background-color: #3071a9;
         }
 
+        button.delete-account {
+            background-color: #ff0000;
+        }
+
+
         /* Top-Bar */
         .top-bar {
             position: fixed;
@@ -82,7 +87,8 @@
     <div onclick="window.location.href='/account_menu.html';">User: <span id="currentUser"></span></div>
 </div>
 <div class="content">
-    <button onclick="delAccountConfirm()">Delete Account</button>
+    <button onclick="delAccountConfirm()" class="delete-account">Delete Account</button>
+    <button onclick="logout()" id="logout-btn">Logout</button>
 </div>
 
 </head>
@@ -101,7 +107,7 @@
         const email = currentUser.textContent;
 
         fetch('/acc_delete?email=' + encodeURIComponent(email), {
-            method: 'GET',
+            method: 'DELETE',
         })
             .then(response => {
                 if (response.ok) {
@@ -115,6 +121,13 @@
                 console.error(error);
             });
     }
+
+    function logout() {
+
+        document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        window.location.href = "/index.html";
+    }
+
 
     //-------------------------------------------------------
     fetch('/user_auth', {

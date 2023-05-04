@@ -139,7 +139,7 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" value="Submit">
+            <input type="submit" onsubmit="searchReciepes()" value="Submit">
         </div>
     </form>
 </div>
@@ -151,7 +151,31 @@
 
     //------------------------------------------------------------
 
+function searchReciepes(){
+    // Fügen Sie hier den zweiten fetch-Aufruf hinzu:
+    const ingredients = document.getElementById('ingredients').value;
+    const category = document.getElementById('category').value;
+    const params = new URLSearchParams();
+    params.append('ingredients', ingredients);
+    params.append('category', category);
 
+    fetch(`/search_recipes?${params.toString()}`, {
+        method: 'GET',
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Fehler beim Abrufen von Rezepten');
+            }
+        })
+        .then(recipe_data => {
+            // Verarbeiten Sie hier die zurückgegebenen Rezeptdaten
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
 
     //------------------------------------------------------------
 
@@ -172,29 +196,7 @@
 
             //------------------------------------------------------------------------
 
-            // Fügen Sie hier den zweiten fetch-Aufruf hinzu:
-            const ingredients = document.getElementById('ingredients').value;
-            const category = document.getElementById('category').value;
-            const params = new URLSearchParams();
-            params.append('ingredients', ingredients);
-            params.append('category', category);
 
-            fetch(`/search_recipes?${params.toString()}`, {
-                method: 'GET',
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Fehler beim Abrufen von Rezepten');
-                    }
-                })
-                .then(recipe_data => {
-                    // Verarbeiten Sie hier die zurückgegebenen Rezeptdaten
-                })
-                .catch(error => {
-                    console.error(error);
-                });
         })
         .catch(error => {
             console.error(error);

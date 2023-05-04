@@ -145,7 +145,7 @@ app.get('/user_auth', authenticateUser, (req, res) => {
         });
 });
 
-app.get('/acc_delete', authenticateUser, (req, res) => {
+app.delete('/acc_delete', authenticateUser, (req, res) => {
 
     const email = req.query.email;
 
@@ -160,8 +160,6 @@ app.get('/acc_delete', authenticateUser, (req, res) => {
             });
         }
     });
-
-
 });
 
 app.get('/search_recipes', authenticateUser, (req, res) => {
