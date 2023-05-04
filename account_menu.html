@@ -40,6 +40,21 @@
             background-color: #ff0000;
         }
 
+        button.backbtn{ /* btn class */
+            width: 100px;
+        }
+
+
+
+        .back-btn { /* div class */
+            position: absolute;
+
+
+            top: 70px;
+            left: 20px;
+        }
+
+
 
         /* Top-Bar */
         .top-bar {
@@ -87,13 +102,22 @@
     <div onclick="window.location.href='/account_menu.html';">User: <span id="currentUser"></span></div>
 </div>
 <div class="content">
+    <div class="back-btn">
+        <button onclick="goBack()" class="backbtn">Zurück</button>
+    </div>
     <button onclick="delAccountConfirm()" class="delete-account">Delete Account</button>
     <button onclick="logout()" id="logout-btn">Logout</button>
+
+
 </div>
 
 </head>
 <body>
 <script>
+
+        function goBack() {
+        window.history.back();
+    }
 
     function delAccountConfirm() {
         if (window.confirm("Sind Sie sicher, dass Sie Ihr Konto löschen möchten?")) {

@@ -145,6 +145,12 @@ app.get('/user_auth', authenticateUser, (req, res) => {
         });
 });
 
+app.get('/search_recipes', (req, res) => {
+    const ingredients = req.query.ingredients;
+    const category = req.query.category;
+    res.status(200);
+});
+
 app.delete('/acc_delete', authenticateUser, (req, res) => {
 
     const email = req.query.email;
@@ -162,11 +168,6 @@ app.delete('/acc_delete', authenticateUser, (req, res) => {
     });
 });
 
-app.get('/search_recipes', authenticateUser, (req, res) => {
-    const ingredients = req.query.ingredients;
-    const category = req.query.category;
-    res.status(200).json({ recipe: "dummy" });
-});
 
 
 app.get('*', (req, res) => {

@@ -1,71 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Willkommen</title>
+    <title>Willkommen!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #f7f7f7;
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            margin: 0;
         }
-
         h1 {
             text-align: center;
             margin-top: 50px;
             font-size: 36px;
             color: #333333;
         }
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 50vh;
 
-        a, button {
-            display: block;
-            margin: 0 auto;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
             width: 200px;
-            padding: 10px;
-            border-radius: 5px;
+            height: 60px;
+            border-radius: 50px;
             background-color: #428bca;
             color: #fff;
             font-size: 20px;
             text-align: center;
             text-decoration: none;
-            margin-bottom: 20px;
+            cursor: pointer;
             position: relative;
+            transition: transform 0.3s, width 0.3s, background-color 0.3s;
             overflow: hidden;
-            border: none; /* Neue Regel, um die Umrandung zu entfernen */
         }
-
-        a:focus, button:focus {
-            outline: none; /* Neue Regel, um den Focus-Rahmen zu entfernen */
+        .btn:hover {
+            transform: scale(1.1);
+            width: 200px;
+            background-color: #3071a9;
         }
-
-        a::before, button::before {
+        .btn::before, .btn::after {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            width: 50%;
             height: 100%;
-            border-radius: 5px;
-            background-color: #3071a9;
-            transform: scaleX(0);
+            border-radius: 50px;
+            background-color: #428bca;
             transform-origin: left;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.3s, background-color 0.3s;
         }
-
-        a:hover::before, button:hover::before {
-            transform: scaleX(1);
+        .btn::before {
+            left: -50%;
         }
-
-        a span, button span {
+        .btn:hover::before, .btn:hover::after {
+            transform: scaleX(2);
+            background-color: #3071a9;
+        }
+        .btn span {
             position: relative;
             z-index: 1;
         }
-
+        .my-paragraph {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            text-align: justify;
+        }
     </style>
 </head>
 <body>
-<h1>Willkommen auf unserer Website</h1>
+<h1>Willkommen auf EmptyYourFridge.com</h1>
+<p class="my-paragraph">
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+    magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+    gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
+    elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+    eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum
+    dolor sit amet.
 
-<a href="formulare/register_form.html"><span>Registrieren</span></a>
-<button onclick="location.href='formulare/login_form.html'"><span>Anmelden</span></button>
-
+</p>
+<div class="btn-container">
+    <a href="./formulare/register_form.html" class="btn"><span>Registrieren</span></a>
+    <a href="./formulare/login_form.html" class="btn"><span>Anmelden</span></a>
+</div>
 </body>
 </html>

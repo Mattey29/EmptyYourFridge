@@ -123,7 +123,7 @@
 
 <<div class="content">
     <h1>Search Recipes</h1>
-    <form>
+    <form id="searchReciepes" method="GET" onsubmit="searchReciepes(event)">
         <div class="form-group">
             <label for="ingredients">Ingredients:</label>
             <input type="text" id="ingredients" name="ingredients" pattern="[A-Za-z0-9]+(,[A-Za-z0-9]+)*" placeholder="Enter ingredients separated by commas">
@@ -139,7 +139,7 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" onsubmit="searchReciepes()" value="Submit">
+            <input type="submit" value="Submit">
         </div>
     </form>
 </div>
@@ -151,7 +151,14 @@
 
     //------------------------------------------------------------
 
-function searchReciepes(){
+/*
+    fetch(`/search_recipes?${params.toString()}`, {
+        method: 'GET',
+    })
+*/
+
+function searchReciepes(event){
+    event.preventDefault();
     // Fügen Sie hier den zweiten fetch-Aufruf hinzu:
     const ingredients = document.getElementById('ingredients').value;
     const category = document.getElementById('category').value;
@@ -159,8 +166,12 @@ function searchReciepes(){
     params.append('ingredients', ingredients);
     params.append('category', category);
 
-    fetch(`/search_recipes?${params.toString()}`, {
-        method: 'GET',
+    fetch(`/search_recipes}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     })
         .then(response => {
             if (response.ok) {
@@ -182,6 +193,7 @@ function searchReciepes(){
     fetch('/user_auth', {
         method: 'GET',
     })
+
         .then(response => {
             if (response.ok) {
                 return response.json();
@@ -196,12 +208,10 @@ function searchReciepes(){
 
             //------------------------------------------------------------------------
 
-
         })
         .catch(error => {
             console.error(error);
         });
-
 
 </script>
 
