@@ -19,16 +19,19 @@ function sendData(event) {
         .then(response => {
             if (response.ok) {
                 document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-
                 const cookie = response.headers.get('Set-Cookie');
                 document.cookie = cookie; // Cookie setzen
                 window.location.href = "./succ_login.html";
+            } else if (response.status === 401) {
+                throw new Error("Benutzer nicht gefunden.");
             } else {
-                throw new Error("Fehler beim Absenden des Formulars.");
-                window.location.href = "./index.html";
+                throw new Error("Fehler beim Einloggen.");
             }
         })
         .catch(error => {
             console.error(error);
+            // Fehlermeldung anzeigen
+            alert('Fehler beim Einloggen: ' + error.message);
         });
+
 }

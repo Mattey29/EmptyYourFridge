@@ -71,11 +71,26 @@ function getEmailByCookie(connection, cookie, callback) {
     });
 }
 
+function deleteUser(connection, email, callback) {
+    // SQL-Abfrage zum Löschen eines Benutzerkontos
+    const query = `DELETE FROM user WHERE email = '${email}'`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            const user = results[0];
+            callback(null, user);
+        }
+    });
+}
+
 module.exports = {
     createUser,
     getUser,
     getCookie,
     setCookie,
+    deleteUser,
     getEmailByCookie,
     //updateUser,
     //deleteUser

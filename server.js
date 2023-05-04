@@ -92,7 +92,7 @@ app.post('/formulare/login', express.json(), (req, res) => {
         if (error) {
             console.error("An error occurred while retrieving the user:", error);
         } else {
-            if(email == user.email) {
+            if (user && email == user.email) { // Überprüfen, ob ein Benutzer gefunden wurde
                 if (validatePassword(password, user.password, user.salt)) {
 
                     db.setCookie(connection, email, newCookie, (error) => {
@@ -111,6 +111,12 @@ app.post('/formulare/login', express.json(), (req, res) => {
                     console.log(res.headers);
                     res.end(`Session-ID ${newCookie} generiert`);
                 }
+                else {
+                    res.end('Falsches Passwort.');
+                }
+            }
+            else {
+                res.status(401).send('Falsche Login-Daten');
             }
         }
 
@@ -137,6 +143,25 @@ app.get('/user_auth', authenticateUser, (req, res) => {
                 res.status(200).json({ email: user.email });
             }
         });
+});
+
+app.get('/acc_delete', authenticateUser, (req, res) => {
+
+    const email = req.query.email;
+
+    db.deleteUser(connection, email, (error) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            res.status(500);
+        } else {
+            res.status(200).json({
+                success: true,
+                message: 'Das Benutzerkonto wurde erfolgreich gelöscht.'
+            });
+        }
+    });
+
+
 });
 
 app.get('/search_recipes', authenticateUser, (req, res) => {
