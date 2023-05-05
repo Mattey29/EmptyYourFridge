@@ -18,7 +18,7 @@ function sendData(event) {
     })
         .then(response => {
             if (response.ok) {
-                window.location.href = "./succ_registered.html";
+                window.location.href = "/public/html/succ_registered.html";
             } else {
                 return response.json(); // Auslesen der Fehlermeldung
             }

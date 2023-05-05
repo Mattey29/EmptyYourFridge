@@ -173,7 +173,7 @@ app.delete('/acc_delete', authenticateUser, (req, res) => {
 app.get('*', (req, res) => {
     let filePath = '.' + req.url;
     if (filePath == './') {
-        filePath = './index.html';
+        filePath = './public/html/index.html';
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();

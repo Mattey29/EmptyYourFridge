@@ -98,7 +98,7 @@
 </head>
 <body>
 <div class="top-bar">
-    <h2 onclick="window.location.href='http://localhost:3000/index.html'">EmptyYourFridge</h2>
+    <h2 onclick="window.location.href='http://localhost:3000/public/html/index.html'">EmptyYourFridge</h2>
     <div onclick="window.location.href='/account_menu.html';">User: <span id="currentUser"></span></div>
 </div>
 <div class="content">
@@ -136,7 +136,7 @@
             .then(response => {
                 if (response.ok) {
                     window.alert("Ihr Konto wurde erfolgreich gelöscht.");
-                    window.location.href = "/index.html";
+                    window.location.href = "index.html";
                 } else {
                     throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
                 }
@@ -149,7 +149,7 @@
     function logout() {
 
         document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = "/index.html";
+        window.location.href = "index.html";
     }
 
 
