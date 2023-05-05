@@ -48,6 +48,7 @@ project/
 ├── .gitignore
 └── README.md
 
+
 > Der public/-Ordner enthält alle Dateien, die der Benutzer im Browser sehen und interagieren kann, einschließlich HTML-, CSS- und JavaScript-Dateien.
 
 > Der server/-Ordner enthält alle Backend-Dateien, einschließlich Servercode, Routen, Controller, Model und Ansichten.
