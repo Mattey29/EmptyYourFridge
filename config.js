@@ -1,9 +1,10 @@
-module.exports = { //password: myrootpassword
-    host: 'LAPTOP-76KKREGH',
-    user: 'emptyyourfridge_admin',
+module.exports = {
+    host: 'localhost',
+    user: 'root',
     password: 'admin123',
     database: 'emptyyourfridge_db',
-    insecureAuth: true,
+    authPlugin: 'caching_sha2_password'
 };
+
 
 
