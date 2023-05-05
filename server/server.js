@@ -5,8 +5,8 @@ const crypto = require('crypto');
 
 const express = require('express');
 const mysql = require('mysql2'); //mysql
-const config = require('./config.js');
-const db = require('./db_access');
+const config = require('./database/config.js');
+const db = require('./database/db_access');
 const connection = mysql.createConnection(config);
 
 const cookieParser = require('cookie-parser');
