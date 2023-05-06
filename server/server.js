@@ -15,6 +15,8 @@ const { hashPassword, validatePassword } = require('./hashPassword');
 const app = express();
 const port = 3000;
 
+const axios = require('axios'); //API
+
 app.use(cookieParser());
 
 connection.connect((error) => {
@@ -145,10 +147,67 @@ app.get('/user_auth', authenticateUser, (req, res) => {
         });
 });
 
+function formatAPIString(str) {
+    // Entferne alle Leerzeichen aus dem String
+    str = str.replace(/\s+/g, '');
+
+    // Füge nach jedem Komma ein Pluszeichen ein
+    str = str.replace(/,/g, ',+');
+
+    // Gib den formatierten String zurück
+    return str;
+}
+
+function removeDietAll(apiUrl) {
+    const dietAllString = '&diet=all';
+    const dietIndex = apiUrl.indexOf(dietAllString);
+
+    if (dietIndex !== -1) {
+        const dietValue = apiUrl.substr(dietIndex + dietAllString.length);
+        if (!dietValue || dietValue.charAt(0) === '&') {
+            apiUrl = apiUrl.substr(0, dietIndex) + apiUrl.substr(dietIndex + dietAllString.length);
+        }
+    }
+
+    return apiUrl;
+}
+
+
+
+
+
 app.get('/search_recipes', (req, res) => {
+    let API_url = "https://api.spoonacular.com/recipes/";
+    const API_key = "6314fe6560054f0788f0b138cab27eef"
+
     const ingredients = req.query.ingredients;
-    const category = req.query.category;
-    res.status(200);
+    const diet = req.query.category;
+    const maxAmountReciepes = "2";
+
+    API_url = API_url + "findByIngredients?apiKey=" + API_key + "&diet=" + diet + "&ingredients=" + ingredients + "&number=" + maxAmountReciepes + "&ranking=2";
+
+    API_url = removeDietAll(API_url);
+
+    const API_url_formatted = formatAPIString(API_url);
+    let api_response = "";
+
+    axios.get(API_url_formatted)
+        .then(response => {
+            api_response = response.data;
+            res.status(200).json({
+                ingridents: ingredients,
+                diet: diet,
+                URL: API_url_formatted,
+                data: api_response,
+            });
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({
+                message: 'Fehler beim Abrufen der Daten von der API',
+                error: error
+            });
+        });
 });
 
 app.delete('/acc_delete', authenticateUser, (req, res) => {
