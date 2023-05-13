@@ -84,6 +84,36 @@ function deleteUser(connection, email, callback) {
         }
     });
 }
+//-------------------------------------------------------------------------------------------------------------
+
+function saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback) {
+    const query = `INSERT INTO savedrecipes (title, userId, image, usedIngredients, unusedIngredients, missedIngredients) VALUES ('${title}', ${user_id}, '${image}', '${usedIngredients}', '${unusedIngredients}', '${missedIngredients}')`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            callback(null, results.insertId);
+        }
+    });
+}
+
+function getIdByCookie(connection, cookie, callback) {
+    const query = `SELECT id FROM user WHERE cookie = '${cookie}'`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            if (results.length === 0) {
+                callback(new Error('No user found with that cookie'));
+            } else {
+                const user = results[0];
+                callback(null, user);
+            }
+        }
+    });
+}
 
 module.exports = {
     createUser,
@@ -92,6 +122,8 @@ module.exports = {
     setCookie,
     deleteUser,
     getEmailByCookie,
+    saveRecipe,
+    getIdByCookie,
+
     //updateUser,
-    //deleteUser
 };

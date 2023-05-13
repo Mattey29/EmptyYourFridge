@@ -126,7 +126,7 @@
 
 <<div class="content">
     <h1>Search Recipes</h1>
-    <form id="searchReciepes" method="GET" onsubmit="searchRecipes(event)">
+    <form id="searchRecipes" method="GET">
         <div class="form-group">
             <label for="ingredients">Ingredients:</label>
             <input type="text" id="ingredients" name="ingredients" pattern="^(?!^,)(?!.*,,)[a-zA-Z\s,]+$" placeholder="Enter ingredients separated by commas">
@@ -142,7 +142,7 @@
         </div>
 
         <div class="form-group">
-            <input type="submit" value="Submit">
+            <input type="submit" value="Submit" onclick="searchRecipes(event)">
         </div>
     </form>
 
@@ -163,6 +163,7 @@
         method: 'GET',
     })
 */
+    const saveButtons = [];
 
     function displayRecipes(recipes) {
             if (!Array.isArray(recipes)) {
@@ -226,8 +227,14 @@
 
             const save_button = document.createElement('button');
             save_button.textContent = 'Save Recipe';
-            save_button.addEventListener('click', saveRecipe(recipe));
+            save_button.addEventListener('click', (event) => saveRecipe(event, recipe));
 
+            // Eindeutige ID für den Button generieren
+            const buttonId = `save_button_${Date.now()}`;
+            save_button.setAttribute('id', buttonId);
+
+            // save_button-Element zum Objekt hinzufügen
+            saveButtons[buttonId] = save_button.textContent;
 
             recipeElement.appendChild(titleElement);
             recipeElement.appendChild(imageElement);
@@ -239,19 +246,48 @@
         });
     }
 
-    function saveRecipe(recipe){
+async function saveRecipe(event, recipe) {
 
-        /*let used_ingridient_string;
+        event.preventDefault();
+
+    const button = event.target;
+    const buttonId = button.getAttribute('id');
+
+    if (saveButtons.hasOwnProperty(buttonId)) {
+        button.textContent = 'Saved';
+        button.style.backgroundColor = 'green';
+    }
+
+        //-------------------------------------
+
+        let used_ingredient_string = "";
+        let missed_ingredient_string = ""
+        let unused_ingredient_string = "";
+
         if (recipe.usedIngredients) {
             recipe.usedIngredients.forEach(ingredient => {
-                used_ingridient_string = used_ingridient_string + ", " + ingredient;
+                used_ingredient_string = used_ingredient_string + ", " + ingredient.name;
+            });
+        }
+
+        if (recipe.missedIngredients) {
+            recipe.missedIngredients.forEach(ingredient => {
+                missed_ingredient_string = missed_ingredient_string + ", " + ingredient.name;
+            });
+        }
+
+        if (recipe.unusedIngredients) {
+            recipe.unusedIngredients.forEach(ingredient => {
+                unused_ingredient_string = unused_ingredient_string + ", " + ingredient.name;
             });
         }
 
         const data = {
-            title: recipe.title;
-            image: recipe.image;
-            used_ingridients: used_ingridient_string;
+            title: recipe.title,
+            image: recipe.image,
+            used_ingredients: used_ingredient_string,
+            unused_ingredients: unused_ingredient_string,
+            missed_ingredients: missed_ingredient_string,
 
         };
 
@@ -276,7 +312,7 @@
             })
             .catch(error => {
                 console.error(error);
-            });*/
+            });
 
     }
 

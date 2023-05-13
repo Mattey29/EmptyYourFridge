@@ -17,7 +17,10 @@ const port = 3000;
 
 const axios = require('axios'); //API
 
+const bodyParser = require('body-parser');
+
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 connection.connect((error) => {
     if (error) {
@@ -205,10 +208,37 @@ app.get('/formulare/search_recipes', async (req, res) => {
 });
 
 app.post('/save_recipe', (req, res) => {
-    title = req.query.title;
-    image = req.query.image;
-
+    const recipeData = req.body;
     const sessionIdCookie = req.cookies.session_id;
+
+    const title = req.body.title;
+    const image = req.body.image;
+    const usedIngredients = req.body.used_ingredients;
+    const unusedIngredients = req.body.unused_ingredients;
+    const missedIngredients = req.body.missed_ingredients;
+
+
+
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            res.status(500);
+        } else {
+            let user_id = user.id;
+
+            db.saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, (error, recipeId) => {
+                if (error) {
+                    console.error("An error occurred while saving the data:", error);
+                    res.status(500);
+                }
+                else{
+                    res.status(200);
+                }
+            });
+        }
+    });
+
+    //connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback
 
 });
 
