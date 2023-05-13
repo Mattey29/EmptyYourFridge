@@ -176,7 +176,7 @@ function removeDietAll(apiUrl) {
 
 
 
-app.get('/search_recipes', (req, res) => {
+app.get('/formulare/search_recipes', async (req, res) => {
     let API_url = "https://api.spoonacular.com/recipes/";
     const API_key = "6314fe6560054f0788f0b138cab27eef"
 
@@ -191,24 +191,29 @@ app.get('/search_recipes', (req, res) => {
     const API_url_formatted = formatAPIString(API_url);
     let api_response = "";
 
-    axios.get(API_url_formatted)
-        .then(response => {
-            api_response = response.data;
-            res.status(200).json({
-                ingridents: ingredients,
-                diet: diet,
-                URL: API_url_formatted,
-                data: api_response,
-            });
-        })
-        .catch(error => {
-            console.log(error);
-            res.status(500).json({
-                message: 'Fehler beim Abrufen der Daten von der API',
-                error: error
-            });
+    try {
+        const response = await axios.get(API_url_formatted);
+        api_response = response.data;
+        res.status(200).json(api_response);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'Fehler beim Abrufen der Daten von der API',
+            error: error
         });
+    }
 });
+
+app.post('/save_recipe', (req, res) => {
+    title = req.query.title;
+    image = req.query.image;
+
+    const sessionIdCookie = req.cookies.session_id;
+
+});
+
+
+//----------------------------------------------------------------------
 
 app.delete('/acc_delete', authenticateUser, (req, res) => {
 

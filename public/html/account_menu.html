@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport">
     <meta charset="UTF-8">
     <title>Success!</title>
 
@@ -115,7 +116,6 @@
 </div>
 
 </head>
-<body>
 <script>
 
         function goBack() {
@@ -149,13 +149,6 @@
             });
     }
 
-    function logout() {
-
-        document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = "index.html";
-    }
-
-
     //-------------------------------------------------------
     fetch('/user_auth', {
         method: 'GET',
@@ -177,6 +170,9 @@
             console.error(error);
         });
 </script>
+
+
+<script src="/public/user_account/logout.js"></script>
 
 </body>
 </html>

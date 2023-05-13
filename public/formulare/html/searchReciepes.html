@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport">
     <meta charset="UTF-8">
     <title>Search Reciepes!</title>
 
@@ -125,10 +126,10 @@
 
 <<div class="content">
     <h1>Search Recipes</h1>
-    <form id="searchReciepes" method="GET" onsubmit="searchReciepes(event)">
+    <form id="searchReciepes" method="GET" onsubmit="searchRecipes(event)">
         <div class="form-group">
             <label for="ingredients">Ingredients:</label>
-            <input type="text" id="ingredients" name="ingredients" pattern="^[a-zA-Z0-9][-a-zA-Z0-9\s]*,[\s]*[a-zA-Z0-9][-a-zA-Z0-9\s]*(,[\s]*[a-zA-Z0-9][-a-zA-Z0-9\s]*)*$" placeholder="Enter ingredients separated by commas">
+            <input type="text" id="ingredients" name="ingredients" pattern="^(?!^,)(?!.*,,)[a-zA-Z\s,]+$" placeholder="Enter ingredients separated by commas">
         </div>
 
         <div class="form-group">
@@ -144,6 +145,10 @@
             <input type="submit" value="Submit">
         </div>
     </form>
+
+    <div id="recipes-container"></div>
+
+
 </div>
 
 
@@ -159,32 +164,149 @@
     })
 */
 
-function searchReciepes(event){
-    event.preventDefault();
-    // Fügen Sie hier den zweiten fetch-Aufruf hinzu:
-    const ingredients = document.getElementById('ingredients').value;
-    const category = document.getElementById('category').value;
-    const params = new URLSearchParams();
-    params.append('ingredients', ingredients);
-    params.append('category', category);
+    function displayRecipes(recipes) {
+            if (!Array.isArray(recipes)) {
+                console.error('Recipes is not an array');
+                return;
+            }
 
-    fetch(`/search_recipes?${params.toString()}`, {
-        method: 'GET',
-    })
-        .then(response => {
+        const container = document.querySelector('#recipes-container');
+        container.innerHTML = '';
+
+        recipes.forEach(recipe => {
+            const recipeElement = document.createElement('div');
+            recipeElement.classList.add('recipe');
+
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = recipe.title;
+
+            const imageElement = document.createElement('img');
+            imageElement.src = recipe.image;
+
+            const usedIngredientsElement = document.createElement('ul');
+
+            if (recipe.usedIngredients) {
+                const usedIngredientsHeading = document.createElement('h3');
+                usedIngredientsHeading.textContent = 'Used Ingredients';
+                usedIngredientsElement.appendChild(usedIngredientsHeading);
+
+                recipe.usedIngredients.forEach(ingredient => {
+                    const usedIngredientItem = document.createElement('li');
+                    usedIngredientItem.textContent = `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+                    usedIngredientsElement.appendChild(usedIngredientItem);
+                });
+            }
+
+            const unusedIngredientsElement = document.createElement('ul');
+
+            const unusedIngredientsHeading = document.createElement('h3');
+            unusedIngredientsHeading.textContent = 'Unused Ingredients';
+            unusedIngredientsElement.appendChild(unusedIngredientsHeading);
+
+            if (recipe.unusedIngredients) {
+                recipe.unusedIngredients.forEach(ingredient => {
+                    const unusedIngredientItem = document.createElement('li');
+                    unusedIngredientItem.textContent = `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+                    unusedIngredientsElement.appendChild(unusedIngredientItem);
+                });
+            }
+
+            const missedIngredientsElement = document.createElement('ul');
+            const missedIngredientsHeading = document.createElement('h3');
+            missedIngredientsHeading.textContent = 'Missed Ingredients';
+            missedIngredientsElement.appendChild(missedIngredientsHeading);
+
+            if (recipe.missedIngredients) {
+                recipe.missedIngredients.forEach(ingredient => {
+                    const missedIngredientItem = document.createElement('li');
+                    missedIngredientItem.textContent = `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`;
+                    missedIngredientsElement.appendChild(missedIngredientItem);
+                });
+            }
+
+            const save_button = document.createElement('button');
+            save_button.textContent = 'Save Recipe';
+            save_button.addEventListener('click', saveRecipe(recipe));
+
+
+            recipeElement.appendChild(titleElement);
+            recipeElement.appendChild(imageElement);
+            recipeElement.appendChild(usedIngredientsElement);
+            recipeElement.appendChild(unusedIngredientsElement);
+            recipeElement.appendChild(missedIngredientsElement);
+            recipeElement.appendChild(save_button);
+            container.appendChild(recipeElement);
+        });
+    }
+
+    function saveRecipe(recipe){
+
+        /*let used_ingridient_string;
+        if (recipe.usedIngredients) {
+            recipe.usedIngredients.forEach(ingredient => {
+                used_ingridient_string = used_ingridient_string + ", " + ingredient;
+            });
+        }
+
+        const data = {
+            title: recipe.title;
+            image: recipe.image;
+            used_ingridients: used_ingridient_string;
+
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+
+        fetch('/save_recipe', requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Fehler beim POST-Request');
+            })
+            .then(data => {
+                // Daten verarbeiten, die vom Server zurückgegeben wurden
+                console.log(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });*/
+
+    }
+
+
+    async function searchRecipes(event) {
+        event.preventDefault();
+
+        const ingredients = document.getElementById('ingredients').value;
+        const category = document.getElementById('category').value;
+        const params = new URLSearchParams();
+        params.append('ingredients', ingredients);
+        params.append('category', category);
+
+        try {
+            const response = await fetch(`/formulare/search_recipes?${params.toString()}`, {
+                method: 'GET',
+            });
+
             if (response.ok) {
-                return response.json();
+                const data = await response.json();
+                displayRecipes(data);
             } else {
                 throw new Error('Fehler beim Abrufen von Rezepten');
             }
-        })
-        .then(recipe_data => {
-            //const array = JSON.parse(recipe_data.data);
-        })
-        .catch(error => {
+        } catch (error) {
             console.error(error);
-        });
-}
+        }
+    }
+
+
 
     //------------------------------------------------------------
 
