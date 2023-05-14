@@ -138,6 +138,18 @@ function deleteUserRecipe(connection, user_id, recipeTitle,callback){
     });
 }
 
+function updateUserRecipe(connection, user_id, oldTitle, newTitle, image, usedIngredients, unusedIngredients, missedIngredients, callback){
+    const query = `UPDATE savedrecipes SET title = '${newTitle}', userId = '${user_id}', image = '${image}', usedIngredients = '${usedIngredients}', unusedIngredients = '${unusedIngredients}', missedIngredients = '${missedIngredients}' WHERE userId = '${user_id}' AND title = '${oldTitle}'`;
+
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
 module.exports = {
     createUser,
     getUser,
@@ -149,6 +161,7 @@ module.exports = {
     getIdByCookie,
     getAllUserRecipes,
     deleteUserRecipe,
+    updateUserRecipe,
 
     //updateUser,
 };

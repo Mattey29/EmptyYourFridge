@@ -12,6 +12,9 @@ const connection = mysql.createConnection(config);
 const cookieParser = require('cookie-parser');
 const { hashPassword, validatePassword } = require('./hashPassword');
 
+const ejs = require('ejs');
+
+
 const app = express();
 const port = 3000;
 
@@ -19,6 +22,7 @@ const axios = require('axios'); //API
 
 const bodyParser = require('body-parser');
 
+app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -312,7 +316,38 @@ app.delete('/acc_delete', authenticateUser, (req, res) => {
     });
 });
 
+//--------------------------- EDIT RECIPE --------------------------------------------
 
+app.get('/public/html/editRecipe.html', (req, res) => {
+    const recipeData = req.query.recipe;
+
+    // Senden Sie die "editRecipe.html"-Datei an den Client
+    res.sendFile(path.join(__dirname, '../public/html/editRecipe.html'));
+});
+
+app.put('/formulare/editRecipe', express.json(), (req, res) => {
+    const { oldTitle, newTitle, image, usedIngredients, unusedIngredients, missedIngredients } = req.body;
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            res.status(500);
+        } else {
+            let user_id = user.id;
+            db.updateUserRecipe(connection, user_id, oldTitle, newTitle, image, usedIngredients, unusedIngredients, missedIngredients, (error, recipes)=>{
+                if(error){
+                    console.error("An error occurred while retrieving the recipes:", error);
+                    res.status(500);
+                }
+                else{
+                    res.sendStatus(204); // Erfolgsstatus 204 (No Content) senden, um anzuzeigen, dass das Löschen erfolgreich war
+                }
+            });
+        }
+    });
+
+});
 
 app.get('*', (req, res) => {
     let filePath = '.' + req.url;

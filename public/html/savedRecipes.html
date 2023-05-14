@@ -111,15 +111,16 @@
 </div>
 
 <div class="container">
-    <button onclick="loadRecipes()">Load Recipes</button>
+
+    <div id="recipes-container"></div>
 </div>
 
-<div id="recipes-container"></div>
+
 
 <script>
 
     //---------------------------------------------------------------------
-
+    window.onload = loadRecipes();
 
     fetch('/user_auth', {
         method: 'GET',
@@ -207,15 +208,34 @@
                 deleteRecipe(recipe);
             });
 
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit Recipe';
+            editButton.addEventListener('click', () => {
+                editRecipe(recipe);
+            });
+
 
             recipeElement.appendChild(titleElement);
             recipeElement.appendChild(imageElement);
             recipeElement.appendChild(usedIngredientsElement);
             recipeElement.appendChild(unusedIngredientsElement);
             recipeElement.appendChild(missedIngredientsElement);
+
             recipeElement.appendChild(deleteButton);
+            recipeElement.appendChild(editButton);
+
+
             container.appendChild(recipeElement);
         });
+    }
+
+    function editRecipe(recipe){
+        // Die Recipe-Daten als Query-Parameter in der URL codieren
+        const recipeData = encodeURIComponent(JSON.stringify(recipe));
+        const url = 'editRecipe.html?recipe=' + recipeData;
+
+        // Die neue Seite aufrufen
+        window.location.href = url;
     }
 
     function deleteRecipe(recipe){
@@ -229,6 +249,7 @@
                 .then(response => {
                     if (response.ok) {
                         console.log('Rezept erfolgreich gelöscht.');
+                        location.reload();
 
                     } else {
                         console.error('Fehler beim Löschen des Rezepts.');
