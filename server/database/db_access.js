@@ -115,6 +115,29 @@ function getIdByCookie(connection, cookie, callback) {
     });
 }
 
+function getAllUserRecipes(connection, user_id, callback){
+    const query = `SELECT * FROM savedrecipes WHERE userId = '${user_id}'`;
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
+function deleteUserRecipe(connection, user_id, recipeTitle,callback){
+    const query = `DELETE FROM savedrecipes WHERE userId = '${user_id}' AND title = '${recipeTitle}'`;
+
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
 module.exports = {
     createUser,
     getUser,
@@ -124,6 +147,8 @@ module.exports = {
     getEmailByCookie,
     saveRecipe,
     getIdByCookie,
+    getAllUserRecipes,
+    deleteUserRecipe,
 
     //updateUser,
 };

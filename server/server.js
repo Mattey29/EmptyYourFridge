@@ -238,9 +238,59 @@ app.post('/save_recipe', (req, res) => {
         }
     });
 
-    //connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback
+   //connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback
 
 });
+
+// ++++++++++++++++++++++++ LOAD SAVED RECIPES ++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+app.get('/loadUserRecipes', (req, res) => {
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            res.status(500);
+        } else {
+            let user_id = user.id;
+                db.getAllUserRecipes(connection, user_id, (error, recipes)=>{
+                    if(error){
+                        console.error("An error occurred while retrieving the recipes:", error);
+                        res.status(500);
+                    }
+                    else{
+                        res.status(200).json({ recipes: recipes });
+                    }
+                });
+        }
+    });
+});
+
+app.delete('/savedRecipes/:recipeTitle', (req, res) => {
+    const recipeTitle = req.params.recipeTitle;
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            res.status(500);
+        } else {
+            let user_id = user.id;
+            db.deleteUserRecipe(connection, user_id, recipeTitle, (error, recipes)=>{
+                if(error){
+                    console.error("An error occurred while retrieving the recipes:", error);
+                    res.status(500);
+                }
+                else{
+                    res.sendStatus(204); // Erfolgsstatus 204 (No Content) senden, um anzuzeigen, dass das Löschen erfolgreich war
+                }
+            });
+        }
+    });
+
+});
+
+
 
 
 //----------------------------------------------------------------------

@@ -12,7 +12,7 @@
         body{
             margin: 0;
             display: grid;
-            background-color: #282626;
+            background-color: #decccc;
             grid-template-columns: 12% auto;
             grid-auto-rows: 8% auto;
             grid-template-areas:
@@ -110,9 +110,16 @@
     <div class="user_div" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
 </div>
 
+<div class="container">
+    <button onclick="loadRecipes()">Load Recipes</button>
+</div>
+
+<div id="recipes-container"></div>
+
 <script>
 
     //---------------------------------------------------------------------
+
 
     fetch('/user_auth', {
         method: 'GET',
@@ -134,8 +141,132 @@
             console.error(error);
         });
 
+    //------------------------------------------------------------
+    function displayRecipes(res_data) {
+        // Zugriff auf die Rezeptdaten
+        const recipes = res_data.recipes;
+
+        const container = document.querySelector('#recipes-container');
+        container.innerHTML = '';
+
+        recipes.forEach(recipe => {
+            const recipeElement = document.createElement('div');
+            recipeElement.classList.add('recipe');
+
+            const titleElement = document.createElement('h2');
+            titleElement.textContent = recipe.title;
+
+            const imageElement = document.createElement('img');
+            imageElement.src = recipe.image;
+
+            const usedIngredientsElement = document.createElement('ul');
+
+            if (recipe.usedIngredients) {
+                const usedIngredientsHeading = document.createElement('h3');
+                usedIngredientsHeading.textContent = 'Used Ingredients';
+                usedIngredientsElement.appendChild(usedIngredientsHeading);
+
+                const usedIngredientsArray = recipe.usedIngredients.split(',').map(ingredient => ingredient.trim());
+                usedIngredientsArray.forEach(ingredient => {
+                    const usedIngredientItem = document.createElement('li');
+                    usedIngredientItem.textContent = ingredient;
+                    usedIngredientsElement.appendChild(usedIngredientItem);
+                });
+            }
+
+            const unusedIngredientsElement = document.createElement('ul');
+            const unusedIngredientsHeading = document.createElement('h3');
+            unusedIngredientsHeading.textContent = 'Unused Ingredients';
+            unusedIngredientsElement.appendChild(unusedIngredientsHeading);
+
+            if (recipe.unusedIngredients) {
+                const unusedIngredientsArray = recipe.unusedIngredients.split(',').map(ingredient => ingredient.trim());
+                unusedIngredientsArray.forEach(ingredient => {
+                    const unusedIngredientItem = document.createElement('li');
+                    unusedIngredientItem.textContent = ingredient;
+                    unusedIngredientsElement.appendChild(unusedIngredientItem);
+                });
+            }
+
+            const missedIngredientsElement = document.createElement('ul');
+            const missedIngredientsHeading = document.createElement('h3');
+            missedIngredientsHeading.textContent = 'Missed Ingredients';
+            missedIngredientsElement.appendChild(missedIngredientsHeading);
+
+            if (recipe.missedIngredients) {
+                const missedIngredientsArray = recipe.missedIngredients.split(',').map(ingredient => ingredient.trim());
+                missedIngredientsArray.forEach(ingredient => {
+                    const missedIngredientItem = document.createElement('li');
+                    missedIngredientItem.textContent = ingredient;
+                    missedIngredientsElement.appendChild(missedIngredientItem);
+                });
+            }
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete Recipe';
+            deleteButton.addEventListener('click', () => {
+                deleteRecipe(recipe);
+            });
+
+
+            recipeElement.appendChild(titleElement);
+            recipeElement.appendChild(imageElement);
+            recipeElement.appendChild(usedIngredientsElement);
+            recipeElement.appendChild(unusedIngredientsElement);
+            recipeElement.appendChild(missedIngredientsElement);
+            recipeElement.appendChild(deleteButton);
+            container.appendChild(recipeElement);
+        });
+    }
+
+    function deleteRecipe(recipe){
+        //console.error("breakpoint1");
+
+            const recipeTitle = recipe.title;
+
+            fetch(`/savedRecipes/${recipeTitle}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Rezept erfolgreich gelöscht.');
+
+                    } else {
+                        console.error('Fehler beim Löschen des Rezepts.');
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler beim Löschen des Rezepts:', error);
+
+                });
+        }
+
+
+
+
+
+    function loadRecipes(){
+        fetch('/loadUserRecipes', {
+            method: 'GET',
+        })
+            .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Fehler beim Abrufen der Recipes');
+            }
+        })
+            .then(res_data => {
+                displayRecipes(res_data);
+            })
+
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
 </script>
 
-<script src="/public/user_account/logout.js"></script> //logout
+<script src="/public/user_account/logout.js"></script>
 </body>
 </html>
