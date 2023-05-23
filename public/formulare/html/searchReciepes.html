@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Search Reciepes!</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link href="/public/css/sidebar_topbar.css" rel="stylesheet">
 
     <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
 
@@ -21,10 +22,6 @@
                 "sidebar main";
         }
 
-        .top-bar {
-            grid-area: top;
-        }
-
         .my-custom-bg-color-green-light{
             background-color: #59d221 !important;
         }
@@ -37,11 +34,6 @@
             grid-area: main;
         }
 
-        .sidebar {
-            grid-area: sidebar;
-            background-color: #b1c0be;
-            height: 100vh; /* Hinzugefügt */
-        }
 
         .sidebar ul {
             list-style: none;
@@ -111,32 +103,31 @@
     <div class="user_div" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
 </div>
 
-<<div class="container">
+<div class="container">
     <h1>Search Recipes</h1>
     <form id="searchRecipes" method="GET">
-        <div class="form-group">
-            <label for="ingredients">Ingredients:</label>
-            <input type="text" id="ingredients" name="ingredients" pattern="^(?!^,)(?!.*,,)[a-zA-Z\s,]+$" placeholder="Enter ingredients separated by commas">
+        <div class="mb-3">
+            <label for="ingredients" class="form-label">Ingredients:</label>
+            <input type="text" id="ingredients" name="ingredients" class="form-control" pattern="^(?!^,)(?!.*,,)[a-zA-Z\s,]+$" placeholder="Enter ingredients separated by commas">
         </div>
 
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select id="category" name="category">
+        <div class="mb-3">
+            <label for="category" class="form-label">Category:</label>
+            <select id="category" name="category" class="form-select">
                 <option value="all">All</option>
                 <option value="vegetarian">Vegetarian</option>
                 <option value="vegan">Vegan</option>
             </select>
         </div>
 
-        <div class="form-group">
-            <input type="submit" value="Submit" onclick="searchRecipes(event)">
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" onclick="searchRecipes(event)">Submit</button>
         </div>
     </form>
 
     <div id="recipes-container"></div>
-
-
 </div>
+
 
 
 
@@ -253,19 +244,19 @@ async function saveRecipe(event, recipe) {
 
         if (recipe.usedIngredients) {
             recipe.usedIngredients.forEach(ingredient => {
-                used_ingredient_string = used_ingredient_string + ", " + ingredient.name;
+                used_ingredient_string = used_ingredient_string + ingredient.name + ", ";
             });
         }
 
         if (recipe.missedIngredients) {
             recipe.missedIngredients.forEach(ingredient => {
-                missed_ingredient_string = missed_ingredient_string + ", " + ingredient.name;
+                missed_ingredient_string = missed_ingredient_string + ingredient.name + ", " ;
             });
         }
 
         if (recipe.unusedIngredients) {
             recipe.unusedIngredients.forEach(ingredient => {
-                unused_ingredient_string = unused_ingredient_string + ", " + ingredient.name;
+                unused_ingredient_string = unused_ingredient_string + ingredient.name + ", " ;
             });
         }
 

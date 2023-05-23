@@ -230,15 +230,30 @@ app.post('/save_recipe', (req, res) => {
         } else {
             let user_id = user.id;
 
-            db.saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, (error, recipeId) => {
+            db.checkIfRecipeAlreadySaved(connection, user_id, title, (error, recipe) => {
                 if (error) {
-                    console.error("An error occurred while saving the data:", error);
-                    res.status(500);
+                    console.log("Fehler beim Überprüfen des Rezepts:", error);
+                    return;
                 }
-                else{
+                if (recipe) {
+                    console.log("Das Rezept existiert bereits.");
                     res.status(200);
                 }
+                else {
+                    db.saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, (error, recipeId) => {
+                        if (error) {
+                            console.error("An error occurred while saving the data:", error);
+                            res.status(500);
+                        }
+                        else{
+                            res.status(200);
+                        }
+                    });
+
+                }
             });
+
+
         }
     });
 

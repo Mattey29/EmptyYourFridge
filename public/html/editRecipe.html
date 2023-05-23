@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Edit Your Recipe!</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link href="/public/css/sidebar_topbar.css" rel="stylesheet">
 
     <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
     <style>
@@ -20,10 +21,6 @@
                 "sidebar main";
         }
 
-        .top-bar {
-            grid-area: top;
-        }
-
         .my-custom-bg-color-green-light{
             background-color: #59d221 !important;
         }
@@ -34,12 +31,6 @@
 
         .container{
             grid-area: main;
-        }
-
-        .sidebar {
-            grid-area: sidebar;
-            background-color: #b1c0be;
-            height: 100vh; /* Hinzugefügt */
         }
 
         .sidebar ul {
@@ -121,21 +112,30 @@
 
 <div class="container py-5">
     <form id="editRecipeForm" onsubmit="event.preventDefault(); updateRecipe()">
-        <label for="titleInput">Title:</label>
-        <input id="titleInput" type="text" name="title">
+        <div class="mb-3">
+        <label for="titleInput" class="form-label">Title:</label>
+        <input id="titleInput" type="text" name="title" class="form-control">
+        </div>
 
-        <label for="usedIngredientsInput">Used Ingredients:</label>
-        <input id="usedIngredientsInput" type="text" name="usedIngredients">
+        <div class="mb-3">
+        <label for="usedIngredientsInput" class="form-label">Used Ingredients:</label>
+        <input id="usedIngredientsInput" type="text" name="usedIngredients" class="form-control">
+        </div>
 
-        <label for="unusedIngredientsInput">Unused Ingredients:</label>
-        <input id="unusedIngredientsInput" type="text" name="unusedIngredients">
+        <div class="mb-3">
+        <label for="unusedIngredientsInput" class="form-label">Unused Ingredients:</label>
+        <input id="unusedIngredientsInput" type="text" name="unusedIngredients" class="form-control">
+        </div>
 
-        <label for="missedIngredientsInput">Unused Ingredients:</label>
-        <input id="missedIngredientsInput" type="text" name="missedIngredients">
+
+        <div class="mb-3">
+        <label for="missedIngredientsInput" class="form-label">Unused Ingredients:</label>
+        <input id="missedIngredientsInput" type="text" name="missedIngredients" class="form-control">
+        </div>
 
         <input id="imageInput" type="hidden" name="image">
 
-        <button type="submit">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
 

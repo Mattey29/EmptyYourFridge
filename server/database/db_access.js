@@ -150,6 +150,23 @@ function updateUserRecipe(connection, user_id, oldTitle, newTitle, image, usedIn
     });
 }
 
+function checkIfRecipeAlreadySaved(connection, user_id, title, callback) {
+    const query = `SELECT * FROM savedrecipes WHERE userId = '${user_id}' AND title = '${title}'`;
+    // Parameter für die SQL-Abfrage
+    const params = [user_id, title];
+
+    // Ausführen der SQL-Abfrage
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            const recipe = results[0]; // Erster Eintrag im Ergebnis (falls vorhanden)
+            callback(null, recipe);
+        }
+    });
+}
+
+
 module.exports = {
     createUser,
     getUser,
@@ -162,6 +179,7 @@ module.exports = {
     getAllUserRecipes,
     deleteUserRecipe,
     updateUserRecipe,
+    checkIfRecipeAlreadySaved,
 
     //updateUser,
 };
