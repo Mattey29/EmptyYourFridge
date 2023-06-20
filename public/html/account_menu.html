@@ -50,7 +50,7 @@
                 const currentUser = document.getElementById("currentUser");
                 const email = currentUser.textContent;
 
-                fetch('/acc_delete?email=' + encodeURIComponent(email), {
+                fetch('/user/' + encodeURIComponent(email), {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,7 +62,7 @@
                             window.alert("Ihr Konto wurde erfolgreich gelöscht.");
                             window.location.href = "/public/html/index.html";
                         } else {
-                            throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
+                            throw new Error('Fehler beim Löschen des Nutzers');
                         }
                     })
                     .catch(error => {

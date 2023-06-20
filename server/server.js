@@ -554,6 +554,42 @@ app.delete('/savedRecipes/:recipeTitle', (req, res) => {
 
 //----------------------------------------------------------------------
 
+app.delete('/user/:email', (req, res) => {
+    const sessionIdCookie = req.cookies.session_id;
+    const userEmail = req.params.email;
+
+    db.deleteUser(connection, userEmail, (error, user) => {
+        const acceptHeader = req.headers['accept'];
+        if (error) {
+            const errorMessage = {
+                message: 'Error deleting user',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
+        } else {
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse({ message: 'User deleted successfully' });
+                res.set('Content-Type', 'application/xml');
+                res.status(204).send(xmlResponse); // Send 204 (No Content)
+            } else {
+                // Respond with JSON
+                res.sendStatus(204); // Send 204 (No Content)
+            }
+        }
+    })
+
+});
+
 app.delete('/savedRecipes/:recipeTitle', (req, res) => {
     const recipeTitle = req.params.recipeTitle;
     const sessionIdCookie = req.cookies.session_id;

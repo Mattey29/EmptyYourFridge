@@ -25,14 +25,33 @@ function getUser(connection, email, callback) {
 
 function deleteUser(connection, email, callback) {
     // SQL-Abfrage zum Löschen eines Benutzerkontos
-    const query = `DELETE FROM user WHERE email = '${email}'`;
+    let query = `SELECT id FROM user WHERE email = '${email}'`;
 
     connection.query(query, (error, results, fields) => {
         if (error) {
             callback(error);
         } else {
             const user = results[0];
-            callback(null, user);
+
+            query = `DELETE FROM savedrecipes WHERE userId = '${user.id}'`;
+
+            connection.query(query, (error, results, fields) => {
+                if (error) {
+                    callback(error);
+                } else {
+                    query = `DELETE FROM user WHERE email = '${email}'`;
+
+                    connection.query(query, (error, results, fields) => {
+                        if (error) {
+                            callback(error);
+                        } else {
+                            const user = results[0];
+                            callback(null, user);
+                        }
+                    });
+                }
+            });
+
         }
     });
 }
