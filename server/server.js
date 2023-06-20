@@ -39,8 +39,6 @@ connection.connect((error) => {
 function authenticateUser(req, res, next) {
     const sessionIdCookie = req.cookies.session_id;
 
-    console.log(sessionIdCookie);
-
     db.getCookie(connection, sessionIdCookie, (error, user) => {
         const acceptHeader = req.headers['accept'];
 

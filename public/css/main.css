@@ -1,0 +1,93 @@
+
+    body{
+        margin: 0;
+        display: grid;
+        background-color: #decccc;
+        grid-template-columns: 12% auto;
+        grid-auto-rows: 8% auto;
+        grid-template-areas:
+            "top top"
+            "sidebar main";
+    }
+
+    .top-bar {
+        grid-area: top;
+    }
+
+    .my-custom-bg-color-green-light{
+        background-color: #59d221 !important;
+    }
+
+    .my-custom-bg-color-green-dark{
+        background-color: #4da425 !important;
+    }
+
+    .container{
+        grid-area: main;
+        width: 800px;
+        margin: 20px auto auto;
+    }
+
+    .sidebar {
+        grid-area: sidebar;
+        background-color: #b1c0be;
+        height: 100vh; /* Hinzugefügt */
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar li {
+        margin-bottom: 10px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 10px;
+        font-size: 20px;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+    }
+
+    .sidebar a:hover {
+        background-color: #3d8e3b;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .user_div{
+        display: flex;
+        align-items: center; /* Vertikale Zentrierung */
+        margin-left: auto; /* Element fast ganz rechts ausrichten */
+        margin-right: 1%;
+        font-size: 20px;
+    }
+
+    .font-white{
+        color: whitesmoke;
+    }
+
+    .title_tb{
+        display: flex;
+        align-items: center;
+        margin-right: auto; /* Element fast ganz rechts ausrichten */
+        margin-left: 1%;
+        font-size: 40px;
+    }
+
+    .content {
+        margin-left: 250px;
+        padding: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+        width: 600px;
+    }
