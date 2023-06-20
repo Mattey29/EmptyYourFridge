@@ -84,7 +84,6 @@ function authenticateUser(req, res, next) {
 
 // -----------------------------------------------------------------------
 
-
 app.post('/formulare/register', express.json(), (req, res) => {
     let { email, password } = req.body;
 

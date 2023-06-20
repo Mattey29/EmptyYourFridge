@@ -1,82 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport">
     <meta charset="UTF-8">
-    <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success!</title>
+    <link rel="stylesheet" href="/public/css/index.css">
     <style>
         body {
-            background-color: #f7f7f7;
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 36px;
-            color: #333333;
-        }
-
-        /* Button-Element */
-        button {
-            display: block;
-            margin: 0 auto;
-            width: 200px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #428bca;
-            color: #fff;
-            font-size: 20px;
-            border: none;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease-in-out;
-
-            box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.5);
-        }
-
-        button:hover {
-            background-color: #3071a9;
-        }
-
-
-
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #428bca;
-            color: #fff;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-left: 20px;
-            box-sizing: border-box;
-            z-index: 1;
-        }
-
-        .top-bar h2 {
-            margin: 0;
             font-size: 24px;
-            cursor: pointer;
+            margin-bottom: 20px;
         }
 
-        .content {
-            padding-top: 50px;
-        }
-        button {
+        a {
             text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
 
-
+        a:hover {
+            background-color: #0056b3;
+        }
     </style>
-    <title>Success!</title>
 </head>
 <body>
-Successfully registered
-<a href="/public/formulare/html/login_form.html"><button>Zum Login</button></a>
-
+<div class="container">
+    <h1>Successfully registered</h1>
+    <a href="/public/formulare/html/login_form.html" class="btn btn-register">Zum Login</a>
+</div>
 </body>
 </html>

@@ -1,161 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta name="viewport">
-    <meta charset="UTF-8">
-    <title>Edit Your Recipe!</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
-    <link rel="stylesheet" href="/public/css/main.css" type="text/css">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <title>Edit Your Recipe!</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
+        <link rel="stylesheet" href="/public/css/main.css" type="text/css">
+    </head>
+    <body>
 
-</head>
-<body>
+        <aside class="sidebar my-custom-bg-color-green-dark">
+            <ul>
+                <li><a href="/public/formulare/html/searchReciepes.html" class="font-white">Search Recipes</a></li>
+                <li><a href="/public/html/savedRecipes.html" class="font-white">Saved Recipes</a></li>
+                <li><a href="/public/html/account_menu.html" class="font-white">Account Settings</a></li>
+                <li><a href="#" class="font-white" onclick="logout()">Log Out</a></li>
+            </ul>
+        </aside>
 
-<aside class="sidebar my-custom-bg-color-green-dark">
-    <ul>
-        <li><a href="/public/formulare/html/searchReciepes.html" class="font-white">Search Recipes</a></li>
-        <li><a href="/public/html/savedRecipes.html" class="font-white">Saved Recipes</a></li>
-        <li><a href="/public/html/account_menu.html" class="font-white">Account Settings</a></li>
-        <li><a href="#" class="font-white" onclick="logout()">Log Out</a></li>
-    </ul>
-</aside>
-
-
-<div class="top-bar bg-primary my-custom-bg-color-green-light text-white d-flex align-items-center p-2">
-    <h2 class="title_tb" onclick="window.location.href='http://localhost:3000/public/html/index.html'" class="cursor-pointer">EmptyYourFridge</h2>
-    <div class="user_div" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
-</div>
-
-<div class="container py-5">
-    <form id="editRecipeForm" onsubmit="event.preventDefault(); updateRecipe()">
-        <div class="mb-3">
-        <label for="titleInput" class="form-label">Title:</label>
-        <input id="titleInput" type="text" name="title" class="form-control">
+        <div class="top-bar bg-primary my-custom-bg-color-green-light text-white d-flex align-items-center p-2">
+            <h2 class="title_tb cursor-pointer" onclick="window.location.href='http://localhost:3000/public/html/index.html'">EmptyYourFridge</h2>
+            <div class="user_div cursor-pointer" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
         </div>
 
-        <div class="mb-3">
-        <label for="usedIngredientsInput" class="form-label">Used Ingredients:</label>
-        <input id="usedIngredientsInput" type="text" name="usedIngredients" class="form-control">
+        <div class="container py-5">
+            <form id="editRecipeForm" onsubmit="event.preventDefault(); updateRecipe()">
+                <div class="mb-3">
+                    <label for="titleInput" class="form-label">Title:</label>
+                    <input id="titleInput" type="text" name="title" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="usedIngredientsInput" class="form-label">Used Ingredients:</label>
+                    <input id="usedIngredientsInput" type="text" name="usedIngredients" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="unusedIngredientsInput" class="form-label">Unused Ingredients:</label>
+                    <input id="unusedIngredientsInput" type="text" name="unusedIngredients" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="missedIngredientsInput" class="form-label">Missed Ingredients:</label>
+                    <input id="missedIngredientsInput" type="text" name="missedIngredients" class="form-control">
+                </div>
+
+                <input id="imageInput" type="hidden" name="image">
+
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
         </div>
 
-        <div class="mb-3">
-        <label for="unusedIngredientsInput" class="form-label">Unused Ingredients:</label>
-        <input id="unusedIngredientsInput" type="text" name="unusedIngredients" class="form-control">
-        </div>
-
-
-        <div class="mb-3">
-        <label for="missedIngredientsInput" class="form-label">Unused Ingredients:</label>
-        <input id="missedIngredientsInput" type="text" name="missedIngredients" class="form-control">
-        </div>
-
-        <input id="imageInput" type="hidden" name="image">
-
-        <button type="submit" class="btn btn-primary">Save</button>
-    </form>
-</div>
-
-<script>
-    function getParameterByName(name) {
-        const url = new URL(window.location.href);
-        const parameterValue = url.searchParams.get(name);
-        return parameterValue;
-    }
-
-    // Recipe-Daten aus der URL abrufen
-    const recipeDataString = getParameterByName('recipe');
-    const recipeData = JSON.parse(decodeURIComponent(recipeDataString));
-
-    // Formularfelder auswählen
-    const titleInput = document.getElementById('titleInput');
-    const usedIngredientsInput = document.getElementById('usedIngredientsInput');
-    const unusedIngredientsInput = document.getElementById('unusedIngredientsInput');
-    const missedIngredientsInput = document.getElementById('missedIngredientsInput');
-    const imageInput = document.getElementById('imageInput');
-
-    // Werte in die Formularfelder einfügen
-    titleInput.value = recipeData.title;
-    usedIngredientsInput.value = recipeData.usedIngredients;
-    unusedIngredientsInput.value = recipeData.unusedIngredients;
-    missedIngredientsInput.value = recipeData.missedIngredients;
-    imageInput.value = recipeData.image;
-
-</script>
-
-<script>
-    function updateRecipe() {
-        // Formularfelder auswählen
-        const titleInput = document.getElementById('titleInput');
-        const usedIngredientsInput = document.getElementById('usedIngredientsInput');
-        const unusedIngredientsInput = document.getElementById('unusedIngredientsInput');
-        const missedIngredientsInput = document.getElementById('missedIngredientsInput');
-        const imageInput = document.getElementById('imageInput');
-
-        // Werte aus den Formularfeldern abrufen
-        const oldTitle = recipeData.title;;
-        const newTitle = titleInput.value;
-        const usedIngredients = usedIngredientsInput.value;
-        const unusedIngredients = unusedIngredientsInput.value;
-        const missedIngredients = missedIngredientsInput.value;
-        const image = imageInput.value;
-
-        // PUT-Fetch-Request an /formulare/editRecipe senden
-        fetch('/formulare/editRecipe', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                oldTitle: oldTitle,
-                newTitle: newTitle,
-                image: image,
-                usedIngredients: usedIngredients,
-                unusedIngredients: unusedIngredients,
-                missedIngredients: missedIngredients,
-            })
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Recipe updated successfully');
-                } else {
-                    console.error('Failed to update recipe');
-                }
-            })
-            .catch(error => {
-                console.error('An error occurred:', error);
-            });
-    }
-
-</script>
-
-<script>
-    fetch('/user_auth', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
+        <script>
+            function getParameterByName(name) {
+                const url = new URL(window.location.href);
+                const parameterValue = url.searchParams.get(name);
+                return parameterValue;
             }
-        })
-        .then(res_data => {
-            const email = res_data.email;
-            const currentUser = document.getElementById("currentUser");
-            currentUser.textContent = email;
-        })
 
-        .catch(error => {
-            console.error(error);
-        });
+            // Recipe-Daten aus der URL abrufen
+            const recipeDataString = getParameterByName('recipe');
+            const recipeData = JSON.parse(decodeURIComponent(recipeDataString));
 
-</script>
+            // Formularfelder auswählen
+            const titleInput = document.getElementById('titleInput');
+            const usedIngredientsInput = document.getElementById('usedIngredientsInput');
+            const unusedIngredientsInput = document.getElementById('unusedIngredientsInput');
+            const missedIngredientsInput = document.getElementById('missedIngredientsInput');
+            const imageInput = document.getElementById('imageInput');
 
-<script src="/public/user_account/logout.js"></script>
-</body>
+            // Werte in die Formularfelder einfügen
+            titleInput.value = recipeData.title;
+            usedIngredientsInput.value = recipeData.usedIngredients;
+            unusedIngredientsInput.value = recipeData.unusedIngredients;
+            missedIngredientsInput.value = recipeData.missedIngredients;
+            imageInput.value = recipeData.image;
+
+            function updateRecipe() {
+                // Formularfelder auswählen
+                const titleInput = document.getElementById('titleInput');
+                const usedIngredientsInput = document.getElementById('usedIngredientsInput');
+                const unusedIngredientsInput = document.getElementById('unusedIngredientsInput');
+                const missedIngredientsInput = document.getElementById('missedIngredientsInput');
+                const imageInput = document.getElementById('imageInput');
+
+                // Werte aus den Formularfeldern abrufen
+                const oldTitle = recipeData.title;
+                const newTitle = titleInput.value;
+                const usedIngredients = usedIngredientsInput.value;
+                const unusedIngredients = unusedIngredientsInput.value;
+                const missedIngredients = missedIngredientsInput.value;
+                const image = imageInput.value;
+
+                // PUT-Fetch-Request an /formulare/editRecipe senden
+                fetch('/formulare/editRecipe', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        oldTitle: oldTitle,
+                        newTitle: newTitle,
+                        image: image,
+                        usedIngredients: usedIngredients,
+                        unusedIngredients: unusedIngredients,
+                        missedIngredients: missedIngredients,
+                    })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Recipe updated successfully');
+                        } else {
+                            console.error('Failed to update recipe');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('An error occurred:', error);
+                    });
+            }
+
+            fetch('/user_auth', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
+                    }
+                })
+                .then(res_data => {
+                    const email = res_data.email;
+                    const currentUser = document.getElementById("currentUser");
+                    currentUser.textContent = email;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+
+        <script src="/public/user_account/logout.js"></script>
+
+    </body>
 </html>

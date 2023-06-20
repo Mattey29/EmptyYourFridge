@@ -23,6 +23,20 @@ function getUser(connection, email, callback) {
     });
 }
 
+function deleteUser(connection, email, callback) {
+    // SQL-Abfrage zum Löschen eines Benutzerkontos
+    const query = `DELETE FROM user WHERE email = '${email}'`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            const user = results[0];
+            callback(null, user);
+        }
+    });
+}
+
 function getCookie(connection, cookie, callback) {
     const query = `SELECT * FROM user WHERE cookie = '${cookie}'`;
 
@@ -56,8 +70,6 @@ function setCookie(connection, email, cookie, callback) {
     });
 }
 
-
-
 function getEmailByCookie(connection, cookie, callback) {
     const query = `SELECT * FROM user WHERE cookie = '${cookie}'`;
 
@@ -67,33 +79,6 @@ function getEmailByCookie(connection, cookie, callback) {
         } else {
             const user = results[0];
             callback(null, user);
-        }
-    });
-}
-
-function deleteUser(connection, email, callback) {
-    // SQL-Abfrage zum Löschen eines Benutzerkontos
-    const query = `DELETE FROM user WHERE email = '${email}'`;
-
-    connection.query(query, (error, results, fields) => {
-        if (error) {
-            callback(error);
-        } else {
-            const user = results[0];
-            callback(null, user);
-        }
-    });
-}
-//-------------------------------------------------------------------------------------------------------------
-
-function saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback) {
-    const query = `INSERT INTO savedrecipes (title, userId, image, usedIngredients, unusedIngredients, missedIngredients) VALUES ('${title}', ${user_id}, '${image}', '${usedIngredients}', '${unusedIngredients}', '${missedIngredients}')`;
-
-    connection.query(query, (error, results, fields) => {
-        if (error) {
-            callback(error);
-        } else {
-            callback(null, results.insertId);
         }
     });
 }
@@ -111,6 +96,18 @@ function getIdByCookie(connection, cookie, callback) {
                 const user = results[0];
                 callback(null, user);
             }
+        }
+    });
+}
+
+function saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback) {
+    const query = `INSERT INTO savedrecipes (title, userId, image, usedIngredients, unusedIngredients, missedIngredients) VALUES ('${title}', ${user_id}, '${image}', '${usedIngredients}', '${unusedIngredients}', '${missedIngredients}')`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            callback(null, results.insertId);
         }
     });
 }
