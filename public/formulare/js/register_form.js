@@ -3,6 +3,13 @@ function sendData(event) {
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("password_confirm").value;
+
+    if (password !== confirmPassword) {
+        const errorContainer = document.getElementById("error-container");
+        errorContainer.innerHTML = "<p>Die Passwörter stimmen nicht überein.</p>";
+        return;
+    }
 
     const data = {
         email: email,
@@ -13,21 +20,20 @@ function sendData(event) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
     })
         .then(response => {
             if (response.ok) {
                 window.location.href = "/public/html/succ_registered.html";
             } else {
-                return response.json(); // Auslesen der Fehlermeldung
+                return response.json(); // Read error message
             }
         })
         .then(data => {
             if (data) {
                 const message = data.message;
-                // Anzeigen der Fehlermeldung auf der Website
                 const errorContainer = document.getElementById("error-container");
                 errorContainer.innerHTML = `<p>${message}</p>`;
             }
