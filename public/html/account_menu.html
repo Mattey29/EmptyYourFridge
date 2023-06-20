@@ -138,6 +138,10 @@
 
         fetch('/acc_delete?email=' + encodeURIComponent(email), {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
         })
             .then(response => {
                 if (response.ok) {
@@ -155,6 +159,10 @@
     //-------------------------------------------------------
     fetch('/user_auth', {
         method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
     })
         .then(response => {
             if (response.ok) {

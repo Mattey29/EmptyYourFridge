@@ -31,7 +31,7 @@ function getCookie(connection, cookie, callback) {
             callback(error);
         } else {
             if (results.length === 0) {
-                callback(new Error('No user found with that cookie'));
+                callback('No user found with that cookie: ' + cookie);
             } else {
                 const user = results[0];
                 callback(null, user);

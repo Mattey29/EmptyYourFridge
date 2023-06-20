@@ -37,18 +37,46 @@ connection.connect((error) => {
 // ---------------------- MIDDLEWARE for SessionID ---------------------
 
 function authenticateUser(req, res, next) {
-
     const sessionIdCookie = req.cookies.session_id;
 
+    console.log(sessionIdCookie);
+
     db.getCookie(connection, sessionIdCookie, (error, user) => {
+        const acceptHeader = req.headers['accept'];
+
         if (error) {
-            res.status(500).send('Could not get Cookie on Serverside');
+            const errorMessage = {
+                message: 'Could not get Cookie on Serverside',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                //res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
             res.redirect('./formulare/login_form.html');
         } else {
             if (sessionIdCookie === user.cookie) {
                 next();
             } else {
-                res.status(401).send('Unauthorized');
+                const errorMessage = {
+                    message: 'Unauthorized',
+                };
+
+                if (acceptHeader && acceptHeader.includes('application/xml')) {
+                    // Respond with XML
+                    const xmlResponse = generateXMLResponse(errorMessage);
+                    res.set('Content-Type', 'application/xml');
+                    res.status(401).send(xmlResponse);
+                } else {
+                    // Respond with JSON
+                    res.status(401).json(errorMessage);
+                }
                 res.redirect('./formulare/login_form.html');
             }
         }
@@ -65,94 +93,193 @@ app.post('/formulare/register', express.json(), (req, res) => {
     const { salt, hashedPassword } = hashPassword(password);
     password = hashedPassword;
 
-    // Generieren einer zufälligen Session-ID
+    // Generate a random session ID cookie
     const cookie = crypto.randomBytes(8).toString('hex');
 
     const selectQuery = `SELECT id FROM user WHERE email = ?`;
     connection.query(selectQuery, [email], (error, results) => {
+        const acceptHeader = req.headers['accept'];
+
         if (error) {
-            return res.status(500).send({ message: error.message });
-        }
+            const errorMessage = {
+                message: error.message,
+            };
 
-        if (results.length > 0) {
-            // Wenn ein Benutzer gefunden wird, senden Sie eine Fehlermeldung zurück
-            return res.status(409).send({ message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits' });
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
         } else {
-            db.createUser(connection, email, password, cookie, salt, (error, userId) => {
-                if (error) {
-                    res.status(500).send(error.message);
-                } else {
-                    res.status(201).json({ id: userId });
-                }
-            });
-        }
+            if (results.length > 0) {
+                // If a user is found, send an error message
+                const errorMessage = {
+                    message: 'Ein Benutzer mit dieser E-Mail-Adresse existiert bereits',
+                };
 
+                if (acceptHeader && acceptHeader.includes('application/xml')) {
+                    // Respond with XML
+                    const xmlResponse = generateXMLResponse(errorMessage);
+                    res.set('Content-Type', 'application/xml');
+                    res.status(409).send(xmlResponse);
+                } else {
+                    // Respond with JSON
+                    res.status(409).json(errorMessage);
+                }
+            } else {
+                db.createUser(connection, email, password, cookie, salt, (error, userId) => {
+                    const acceptHeader = req.headers['accept'];
+
+                    if (error) {
+                        const errorMessage = {
+                            message: error.message,
+                        };
+
+                        if (acceptHeader && acceptHeader.includes('application/xml')) {
+                            // Respond with XML
+                            const xmlResponse = generateXMLResponse(errorMessage);
+                            res.set('Content-Type', 'application/xml');
+                            res.status(500).send(xmlResponse);
+                        } else {
+                            // Respond with JSON
+                            res.status(500).json(errorMessage);
+                        }
+                    } else {
+                        const responseData = {
+                            id: userId,
+                        };
+
+                        if (acceptHeader && acceptHeader.includes('application/xml')) {
+                            // Respond with XML
+                            const xmlResponse = generateXMLResponse(responseData);
+                            res.set('Content-Type', 'application/xml');
+                            res.status(201).send(xmlResponse);
+                        } else {
+                            // Respond with JSON
+                            res.status(201).json(responseData);
+                        }
+                    }
+                });
+            }
+        }
     });
 });
+
 
 app.post('/formulare/login', express.json(), (req, res) => {
     let { email, password } = req.body;
 
-    // Generieren einer zufälligen Session-ID
+    // Generate a random session ID cookie
     const newCookie = crypto.randomBytes(8).toString('hex');
-
 
     db.getUser(connection, email, (error, user) => {
         if (error) {
-            console.error("An error occurred while retrieving the user:", error);
-        } else {
-            if (user && email == user.email) { // Überprüfen, ob ein Benutzer gefunden wurde
-                if (validatePassword(password, user.password, user.salt)) {
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
 
+            const acceptHeader = req.headers['accept'];
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
+        } else {
+            if (user && email == user.email) {
+                // Check if a user was found
+                if (validatePassword(password, user.password, user.salt)) {
                     db.setCookie(connection, email, newCookie, (error) => {
                         if (error) {
-                            console.error(error);
+                            const errorMessage = {
+                                message: 'Error updating cookie',
+                                error: error,
+                            };
+
+                            const acceptHeader = req.headers['accept'];
+
+                            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                                // Respond with XML
+                                const xmlResponse = generateXMLResponse(errorMessage);
+                                res.set('Content-Type', 'application/xml');
+                                res.status(500).send(xmlResponse);
+                            } else {
+                                // Respond with JSON
+                                res.status(500).json(errorMessage);
+                            }
                         } else {
-                            console.log('Cookie updated successfully!');
+                            const acceptHeader = req.headers['accept'];
+                            res.setHeader('Set-Cookie', `session_id=${newCookie}; HttpOnly; SameSite=Strict; path=/`);
+
+                            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                                // Respond with XML
+                                const xmlResponse = `<response>Session-ID ${newCookie} generiert</response>`;
+                                res.set('Content-Type', 'application/xml');
+                                res.status(200).send(xmlResponse);
+                            } else {
+                                // Respond with JSON
+                                res.status(200).json({ message: `Session-ID ${newCookie} generiert` });
+                            }
                         }
                     });
-
-                    res.setHeader('Set-Cookie', `session_id=${newCookie}; HttpOnly; SameSite=Strict; path=/`);
-
-
-                    // Senden einer Antwort mit der Session-ID
-                    res.writeHead(200, {'Content-Type': 'text/plain'});
-                    console.log(res.headers);
-                    res.end(`Session-ID ${newCookie} generiert`);
+                } else {
+                    res.status(401).end('Falsches Passwort.');
                 }
-                else {
-                    res.end('Falsches Passwort.');
-                }
-            }
-            else {
+            } else {
                 res.status(401).send('Falsche Login-Daten');
             }
         }
-
     });
 });
 
 
-
-
 app.get('/user_auth', authenticateUser, (req, res) => {
-    //const cookies = req.headers.cookie ? req.headers.cookie.split('; ') : [];
-
-    // Suchen des session_id-Cookies
-    //const sessionIdCookie = "6c172e1a9814d7d2";
-        //const sessionIdCookie = cookies.find(cookie => cookie.startsWith('session_id='));
-
     const sessionIdCookie = req.cookies.session_id;
 
     db.getCookie(connection, sessionIdCookie, (error, user) => {
-            if (error) {
-                console.error("An error occurred while retrieving the user:", error);
-                res.status(500);
+        if (error) {
+            console.error("An error occurred while retrieving the user:", error);
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            const acceptHeader = req.headers['accept'];
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
             } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
+        } else {
+            const acceptHeader = req.headers['accept'];
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = `<user><email>${user.email}</email></user>`;
+                res.set('Content-Type', 'application/xml');
+                res.status(200).send(xmlResponse);
+            } else {
+                // Respond with JSON
                 res.status(200).json({ email: user.email });
             }
-        });
+        }
+    });
 });
+
 
 function formatAPIString(str) {
     // Entferne alle Leerzeichen aus dem String
@@ -179,19 +306,15 @@ function removeDietAll(apiUrl) {
     return apiUrl;
 }
 
-
-
-
-
 app.get('/formulare/search_recipes', async (req, res) => {
     let API_url = "https://api.spoonacular.com/recipes/";
-    const API_key = "6314fe6560054f0788f0b138cab27eef"
+    const API_key = "6314fe6560054f0788f0b138cab27eef";
 
     const ingredients = req.query.ingredients;
     const diet = req.query.category;
-    const maxAmountReciepes = "2";
+    const maxAmountRecipes = "2";
 
-    API_url = API_url + "findByIngredients?apiKey=" + API_key + "&diet=" + diet + "&ingredients=" + ingredients + "&number=" + maxAmountReciepes + "&ranking=2";
+    API_url = API_url + "findByIngredients?apiKey=" + API_key + "&diet=" + diet + "&ingredients=" + ingredients + "&number=" + maxAmountRecipes + "&ranking=2";
 
     API_url = removeDietAll(API_url);
 
@@ -201,15 +324,38 @@ app.get('/formulare/search_recipes', async (req, res) => {
     try {
         const response = await axios.get(API_url_formatted);
         api_response = response.data;
-        res.status(200).json(api_response);
+        const acceptHeader = req.headers['accept'];
+
+        if (acceptHeader && acceptHeader.includes('application/xml')) {
+            // Respond with XML
+            const xmlResponse = generateXMLResponse(api_response);
+            res.set('Content-Type', 'application/xml');
+            res.status(200).send(xmlResponse);
+        } else {
+            // Respond with JSON
+            res.status(200).json(api_response);
+        }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
+        console.error(error);
+        const errorMessage = {
             message: 'Fehler beim Abrufen der Daten von der API',
             error: error
-        });
+        };
+
+        const acceptHeader = req.headers['accept'];
+
+        if (acceptHeader && acceptHeader.includes('application/xml')) {
+            // Respond with XML
+            const xmlResponse = generateXMLResponse(errorMessage);
+            res.set('Content-Type', 'application/xml');
+            res.status(500).send(xmlResponse);
+        } else {
+            // Respond with JSON
+            res.status(500).json(errorMessage);
+        }
     }
 });
+
 
 app.post('/save_recipe', (req, res) => {
     const recipeData = req.body;
@@ -221,45 +367,107 @@ app.post('/save_recipe', (req, res) => {
     const unusedIngredients = req.body.unused_ingredients;
     const missedIngredients = req.body.missed_ingredients;
 
-
-
     db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
         if (error) {
             console.error("An error occurred while retrieving the user:", error);
-            res.status(500);
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            const acceptHeader = req.headers['accept'];
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
         } else {
             let user_id = user.id;
 
             db.checkIfRecipeAlreadySaved(connection, user_id, title, (error, recipe) => {
                 if (error) {
-                    console.log("Fehler beim Überprüfen des Rezepts:", error);
+                    const errorMessage = {
+                        message: 'Error checking recipe',
+                        error: error,
+                    };
+
+                    const acceptHeader = req.headers['accept'];
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(500).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(500).json(errorMessage);
+                    }
                     return;
                 }
                 if (recipe) {
-                    console.log("Das Rezept existiert bereits.");
-                    res.status(200);
-                }
-                else {
+                    const errorMessage = {
+                        message: 'Recipe already exists',
+                    };
+
+                    const acceptHeader = req.headers['accept'];
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(200).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(200).json(errorMessage);
+                    }
+                } else {
                     db.saveRecipe(connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, (error, recipeId) => {
                         if (error) {
-                            console.error("An error occurred while saving the data:", error);
-                            res.status(500);
-                        }
-                        else{
-                            res.status(200);
+                            const errorMessage = {
+                                message: 'Error saving recipe',
+                                error: error,
+                            };
+
+                            const acceptHeader = req.headers['accept'];
+
+                            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                                // Respond with XML
+                                const xmlResponse = generateXMLResponse(errorMessage);
+                                res.set('Content-Type', 'application/xml');
+                                res.status(500).send(xmlResponse);
+                            } else {
+                                // Respond with JSON
+                                res.status(500).json(errorMessage);
+                            }
+                        } else {
+                            const successMessage = {
+                                message: 'Recipe saved successfully',
+                            };
+
+                            const acceptHeader = req.headers['accept'];
+
+                            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                                // Respond with XML
+                                const xmlResponse = generateXMLResponse(successMessage);
+                                res.set('Content-Type', 'application/xml');
+                                res.status(200).send(xmlResponse);
+                            } else {
+                                // Respond with JSON
+                                res.status(200).json(successMessage);
+                            }
                         }
                     });
-
                 }
             });
-
-
         }
     });
-
-   //connection, user_id, usedIngredients, unusedIngredients, missedIngredients, title, image, callback
-
 });
+
 
 // ++++++++++++++++++++++++ LOAD SAVED RECIPES ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -267,23 +475,61 @@ app.get('/loadUserRecipes', (req, res) => {
     const sessionIdCookie = req.cookies.session_id;
 
     db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        const acceptHeader = req.headers['accept'];
+
         if (error) {
-            console.error("An error occurred while retrieving the user:", error);
-            res.status(500);
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
         } else {
             let user_id = user.id;
-                db.getAllUserRecipes(connection, user_id, (error, recipes)=>{
-                    if(error){
-                        console.error("An error occurred while retrieving the recipes:", error);
-                        res.status(500);
+            db.getAllUserRecipes(connection, user_id, (error, recipes) => {
+                if (error) {
+                    const errorMessage = {
+                        message: 'Error retrieving recipes',
+                        error: error,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(500).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(500).json(errorMessage);
                     }
-                    else{
-                        res.status(200).json({ recipes: recipes });
+                } else {
+                    const responseData = {
+                        recipes: recipes,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(responseData);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(200).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(200).json(responseData);
                     }
-                });
+                }
+            });
         }
     });
 });
+
 
 app.delete('/savedRecipes/:recipeTitle', (req, res) => {
     const recipeTitle = req.params.recipeTitle;
@@ -309,34 +555,70 @@ app.delete('/savedRecipes/:recipeTitle', (req, res) => {
 
 });
 
-
-
-
 //----------------------------------------------------------------------
 
-app.delete('/acc_delete', authenticateUser, (req, res) => {
+app.delete('/savedRecipes/:recipeTitle', (req, res) => {
+    const recipeTitle = req.params.recipeTitle;
+    const sessionIdCookie = req.cookies.session_id;
 
-    const email = req.query.email;
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        const acceptHeader = req.headers['accept'];
 
-    db.deleteUser(connection, email, (error) => {
         if (error) {
-            console.error("An error occurred while retrieving the user:", error);
-            res.status(500);
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
         } else {
-            res.status(200).json({
-                success: true,
-                message: 'Das Benutzerkonto wurde erfolgreich gelöscht.'
+            let user_id = user.id;
+            db.deleteUserRecipe(connection, user_id, recipeTitle, (error, recipes) => {
+                if (error) {
+                    const errorMessage = {
+                        message: 'Error deleting recipe',
+                        error: error,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(500).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(500).json(errorMessage);
+                    }
+                } else {
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse({ message: 'Recipe deleted successfully' });
+                        res.set('Content-Type', 'application/xml');
+                        res.status(204).send(xmlResponse); // Send 204 (No Content)
+                    } else {
+                        // Respond with JSON
+                        res.sendStatus(204); // Send 204 (No Content)
+                    }
+                }
             });
         }
     });
 });
+
 
 //--------------------------- EDIT RECIPE --------------------------------------------
 
 app.get('/public/html/editRecipe.html', (req, res) => {
     const recipeData = req.query.recipe;
 
-    // Senden Sie die "editRecipe.html"-Datei an den Client
     res.sendFile(path.join(__dirname, '../public/html/editRecipe.html'));
 });
 
@@ -345,23 +627,55 @@ app.put('/formulare/editRecipe', express.json(), (req, res) => {
     const sessionIdCookie = req.cookies.session_id;
 
     db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        const acceptHeader = req.headers['accept'];
+
         if (error) {
-            console.error("An error occurred while retrieving the user:", error);
-            res.status(500);
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
         } else {
             let user_id = user.id;
-            db.updateUserRecipe(connection, user_id, oldTitle, newTitle, image, usedIngredients, unusedIngredients, missedIngredients, (error, recipes)=>{
-                if(error){
-                    console.error("An error occurred while retrieving the recipes:", error);
-                    res.status(500);
-                }
-                else{
-                    res.sendStatus(204); // Erfolgsstatus 204 (No Content) senden, um anzuzeigen, dass das Löschen erfolgreich war
+            db.updateUserRecipe(connection, user_id, oldTitle, newTitle, image, usedIngredients, unusedIngredients, missedIngredients, (error, recipes) => {
+                if (error) {
+                    const errorMessage = {
+                        message: 'Error updating recipe',
+                        error: error,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(500).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(500).json(errorMessage);
+                    }
+                } else {
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse({ message: 'Recipe updated successfully' });
+                        res.set('Content-Type', 'application/xml');
+                        res.status(204).send(xmlResponse); // Send 204 (No Content)
+                    } else {
+                        // Respond with JSON
+                        res.sendStatus(204); // Send 204 (No Content)
+                    }
                 }
             });
         }
     });
-
 });
 
 app.get('*', (req, res) => {
@@ -407,3 +721,21 @@ app.listen(port, () => {
 });
 
 module.exports = connection;
+
+
+function generateXMLResponse(data) {
+    let xmlResponse = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xmlResponse += '<response>\n';
+
+    if (typeof data === 'object') {
+        for (let key in data) {
+            if (data.hasOwnProperty(key)) {
+                xmlResponse += `  <${key}>${data[key]}</${key}>\n`;
+            }
+        }
+    }
+
+    xmlResponse += '</response>';
+
+    return xmlResponse;
+}

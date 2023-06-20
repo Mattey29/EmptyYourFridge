@@ -12,7 +12,8 @@ function sendData(event) {
     fetch('/formulare/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
         body: JSON.stringify(data)
     })
@@ -29,7 +30,6 @@ function sendData(event) {
             }
         })
         .catch(error => {
-            console.error(error);
             // Fehlermeldung anzeigen
             alert('Fehler beim Einloggen: ' + error.message);
         });

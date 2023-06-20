@@ -111,13 +111,17 @@
 </div>
 
 <div class="container py-5">
-    <h1 class="text-center font-white">Successfully login!</h1>
+    <h1 class="text-center font-white">Successfull login!</h1>
     <button onclick="window.location.href='/public/formulare/html/searchReciepes.html';" class="btn btn-primary font-white btn-lg d-block mx-auto my-5">Lege los!</button>
 </div>
 
 <script>
     fetch('/user_auth', {
         method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
     })
         .then(response => {
             if (response.ok) {

@@ -187,7 +187,8 @@
         fetch('/formulare/editRecipe', {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 oldTitle: oldTitle,
@@ -215,6 +216,10 @@
 <script>
     fetch('/user_auth', {
         method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
     })
         .then(response => {
             if (response.ok) {

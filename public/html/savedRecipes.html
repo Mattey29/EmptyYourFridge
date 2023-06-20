@@ -239,6 +239,10 @@
 
             fetch(`/savedRecipes/${recipeTitle}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
             })
                 .then(response => {
                     if (response.ok) {
@@ -263,6 +267,10 @@
     function loadRecipes(){
         fetch('/loadUserRecipes', {
             method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
         })
             .then(response => {
             if (response.ok) {

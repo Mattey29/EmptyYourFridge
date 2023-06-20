@@ -118,6 +118,10 @@
 <script>
     fetch('/user_auth', {
         method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
     })
         .then(response => {
             if (response.ok) {
