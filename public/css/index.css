@@ -1,3 +1,11 @@
+body{
+    background: #eaf2ef !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .image-container {
     position: relative;
 }
@@ -11,13 +19,6 @@
     z-index: -1;
 }
 
-.content-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
 
 .btn-container .btn {
     margin-right: 10px;
@@ -25,4 +26,34 @@
 
 .btn-container .btn:last-child {
     margin-right: 0;
+}
+
+.logo{
+    width: 400px;
+    margin: 20px;
+}
+
+.btn {
+    width: 40%;
+    margin: 10px;
+}
+
+.btn-register{
+    background: #1b264f !important;
+    color: white !important;
+}
+
+.btn-register:hover{
+    border: 2px solid #1b264f !important;
+    background: none !important;
+    color: #1b264f !important;
+}
+
+.btn-login{
+    border: 2px solid #1b264f !important;
+}
+
+.btn-login:hover{
+    background: #1b264f !important;
+    color: white !important;
 }

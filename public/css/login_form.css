@@ -1,5 +1,5 @@
 body {
-    background-color: #f7f7f7;
+    background-color: #eaf2ef;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@ label {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
-    color: #428bca;
+    color: #1b264f;
 }
 
 input[type="email"],
@@ -35,14 +35,14 @@ input[type="submit"] {
 }
 
 input[type="submit"] {
-    background-color: #428bca;
+    background-color: #1b264f;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
 }
 
 input[type="submit"]:hover {
-    background-color: #3071a9;
+    background-color: #1b264f;
 }
 
 #registrationForm {
@@ -59,9 +59,9 @@ input[type="submit"]:hover {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #428bca;
-    color: #fff;
-    height: 50px;
+    border-bottom: 5px solid #1b264f;
+    color: #1b264f;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -78,4 +78,14 @@ input[type="submit"]:hover {
 
 .content {
     padding-top: 50px;
+}
+
+.logo{
+    height: 100%;
+    margin-right: 25px;
+}
+
+.error-container{
+    color: darkred;
+    font-style: italic;
 }
