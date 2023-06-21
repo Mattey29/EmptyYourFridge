@@ -56,6 +56,20 @@ function deleteUser(connection, email, callback) {
     });
 }
 
+function updateUser(connection, emailOld ,emailNew , password, salt, callback) {
+    // SQL-Abfrage zum Löschen eines Benutzerkontos
+    let query = `UPDATE user SET email = '${emailNew}', password = '${password}', salt = '${salt}' WHERE email = '${emailOld}'`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            const user = results[0];
+            callback(null, user);
+        }
+    });
+}
+
 function getCookie(connection, cookie, callback) {
     const query = `SELECT * FROM user WHERE cookie = '${cookie}'`;
 
@@ -186,9 +200,10 @@ function checkIfRecipeAlreadySaved(connection, user_id, title, callback) {
 module.exports = {
     createUser,
     getUser,
+    deleteUser,
+    updateUser,
     getCookie,
     setCookie,
-    deleteUser,
     getEmailByCookie,
     saveRecipe,
     getIdByCookie,
@@ -196,6 +211,4 @@ module.exports = {
     deleteUserRecipe,
     updateUserRecipe,
     checkIfRecipeAlreadySaved,
-
-    //updateUser,
 };
