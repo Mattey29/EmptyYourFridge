@@ -10,7 +10,7 @@
     </head>
     <body>
 
-        <aside class="sidebar my-custom-bg-color-green-dark">
+        <aside class="sidebar">
             <ul>
                 <li><a href="/public/formulare/html/searchReciepes.html" class="font-white">Search Recipes</a></li>
                 <li><a href="/public/html/savedRecipes.html" class="font-white">Saved Recipes</a></li>
@@ -19,18 +19,42 @@
             </ul>
         </aside>
 
-        <div class="top-bar bg-primary my-custom-bg-color-green-light text-white d-flex align-items-center p-2">
+        <div class="top-bar d-flex align-items-center p-2">
             <h2 class="title_tb cursor-pointer" onclick="window.location.href='http://localhost:3000/public/html/index.html'">EmptyYourFridge</h2>
             <div class="user_div" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
         </div>
 
         <div class="container">
+            <div class="content">
+                <form id="updateUserForm" class="input-form mt-3" method="POST" onsubmit="sendUpdate(event)">
+
+                    <label for="email" class="form-label">E-Mail:</label>
+                    <input type="email" id="email" name="email" class="custom-input" placeholder="Ihre E-Mail-Adresse" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                           oninvalid="setCustomValidity('Geben Sie eine gültige E-Mail-Adresse ein')"
+                           oninput="setCustomValidity('')">
+
+                    <label for="password" class="form-label">Passwort:</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" name="password" class="custom-input" placeholder="Ihr Passwort" required pattern=".{6,}"
+                               oninvalid="setCustomValidity('Das Passwort muss mindestens 6 Zeichen lang sein')"
+                               oninput="setCustomValidity('')">
+                        <span style="font-size: 12px; color: gray; display: block; margin-top: 5px;">*mindestens 6 Zeichen</span>
+                    </div>
+                    <div style="position: relative;">
+                        <input type="password" id="password_confirm" name="password_confirm" class="custom-input" placeholder="Ihr Passwort wiederholen" required pattern=".{6,}"
+                               oninvalid="setCustomValidity('Das Passwort muss mindestens 6 Zeichen lang sein')"
+                               oninput="setCustomValidity('')">
+                        <span style="font-size: 12px; color: gray; display: block; margin-top: 5px;">*mindestens 6 Zeichen</span>
+                    </div>
+
+                    <input type="submit" class="submit-btn" value="Daten aktualisieren">
+                    <input type="button" class="submit-btn backbtn" value="Zurück" onclick="goBack()">
+                    <input type="button" class="submit-btn delete-account" value="Account Löschen" onclick="delAccountConfirm()">
+
+                    <div id="error-container"></div> <!-- Fehlercontainer -->
+                </form>
+            </div>
             <div class="container d-flex flex-column align-items-center" style="margin-top: 100px;">
-                <div class="back-btn">
-                    <button onclick="goBack()" class="backbtn">Zurück</button>
-                </div>
-                <button onclick="delAccountConfirm()" class="delete-account">Delete Account</button>
-                <button onclick="logout()" id="logout-btn">Logout</button>
             </div>
 
         </div>

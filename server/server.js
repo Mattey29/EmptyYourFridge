@@ -166,7 +166,6 @@ app.post('/formulare/register', express.json(), (req, res) => {
     });
 });
 
-
 app.post('/formulare/login', express.json(), (req, res) => {
     let { email, password } = req.body;
 
@@ -745,7 +744,6 @@ app.delete('/savedRecipes/:recipeTitle', (req, res) => {
         }
     });
 });
-
 
 //--------------------------- EDIT RECIPE --------------------------------------------
 

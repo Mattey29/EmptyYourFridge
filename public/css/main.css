@@ -1,93 +1,143 @@
+body{
+    margin: 0;
+    display: grid;
+    background-color: #eaf2ef;
+    grid-template-columns: 20% auto;
+    grid-auto-rows: 8% auto;
+    grid-template-areas:
+        "top top"
+        "sidebar main";
+}
 
-    body{
-        margin: 0;
-        display: grid;
-        background-color: #decccc;
-        grid-template-columns: 12% auto;
-        grid-auto-rows: 8% auto;
-        grid-template-areas:
-            "top top"
-            "sidebar main";
-    }
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #eaf2ef;
+    border-bottom: 5px solid #1b264f;
+    color: #1b264f;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
 
-    .top-bar {
-        grid-area: top;
-    }
+.top-bar h2 {
+    margin: 0;
+    font-size: 24px;
+    cursor: pointer;
+}
 
-    .my-custom-bg-color-green-light{
-        background-color: #59d221 !important;
-    }
+.container{
+    grid-area: main;
+    width: 800px;
+    margin: 20px auto auto;
+}
 
-    .my-custom-bg-color-green-dark{
-        background-color: #4da425 !important;
-    }
+.sidebar {
+    grid-area: sidebar;
+    background-color: #b1c0be;
+    height: 100vh; /* Hinzugefügt */
+}
 
-    .container{
-        grid-area: main;
-        width: 800px;
-        margin: 20px auto auto;
-    }
+.sidebar ul {
+    list-style: none;
+    padding: 10px;
+}
 
-    .sidebar {
-        grid-area: sidebar;
-        background-color: #b1c0be;
-        height: 100vh; /* Hinzugefügt */
-    }
+.sidebar li {
+    margin-top: 30px;
+}
 
-    .sidebar ul {
-        list-style: none;
-        padding: 0;
-    }
+.sidebar a {
+    display: block;
+    padding: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    color: #1b264f;
+    text-align: left;
+}
 
-    .sidebar li {
-        margin-bottom: 10px;
-    }
+.sidebar a:hover {
+    background-color: #1b264f;
+    color: white;
+    border-radius: 5px;
+}
 
-    .sidebar a {
-        display: block;
-        padding: 10px;
-        font-size: 20px;
-        text-decoration: none;
-        color: white;
-        text-align: center;
-    }
+.user_div{
+    display: flex;
+    align-items: center; /* Vertikale Zentrierung */
+    margin-left: auto; /* Element fast ganz rechts ausrichten */
+    margin-right: 1%;
+    font-size: 20px;
+}
 
-    .sidebar a:hover {
-        background-color: #3d8e3b;
-        color: white;
-        border-radius: 5px;
-    }
+.font-white{
+    color: whitesmoke;
+}
 
-    .user_div{
-        display: flex;
-        align-items: center; /* Vertikale Zentrierung */
-        margin-left: auto; /* Element fast ganz rechts ausrichten */
-        margin-right: 1%;
-        font-size: 20px;
-    }
+.title_tb{
+    display: flex;
+    align-items: center;
+    margin-right: auto; /* Element fast ganz rechts ausrichten */
+    margin-left: 1%;
+    font-size: 40px;
+}
 
-    .font-white{
-        color: whitesmoke;
-    }
+.form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #1b264f;
+}
 
-    .title_tb{
-        display: flex;
-        align-items: center;
-        margin-right: auto; /* Element fast ganz rechts ausrichten */
-        margin-left: 1%;
-        font-size: 40px;
-    }
+.input-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
 
-    .content {
-        margin-left: 250px;
-        padding: 20px;
-    }
+.custom-input, .submit-btn{
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f2f2f2;
+    color: #333333;
+    box-shadow: inset 0px 0px 5px rgba(0,0,0,0.1);
+}
 
-    label {
-        display: block;
-        margin-bottom: 10px;
-    }
+.delete-account{
+    background-color: #81223F !important;
+}
 
-    input[type="text"] {
-        width: 600px;
-    }
+#error-container{
+    color: darkred;
+    font-style: italic;
+}
+
+.logo{
+    height: 100%;
+    margin-right: 25px;
+}
+
+input[type="submit"], .submit-btn{
+    background-color: #1b264f;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+input[type="submit"]:hover, .submit-btn {
+    background-color: #1b264f;
+}
