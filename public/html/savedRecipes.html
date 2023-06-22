@@ -122,6 +122,13 @@
                         editRecipe(recipe);
                     });
 
+                    const newPictureButton = document.createElement('button');
+                    newPictureButton.textContent = 'Edit Picture';
+                    newPictureButton.addEventListener('click', () => {
+                        newPicture(recipe);
+                    });
+
+
                     recipeElement.appendChild(titleElement);
                     recipeElement.appendChild(imageElement);
                     recipeElement.appendChild(usedIngredientsElement);
@@ -164,6 +171,11 @@
                         console.error('Fehler beim Löschen des Rezepts:', error);
                     });
             }
+
+            function newPicture(recipe){
+                
+            }
+
 
             function loadRecipes(){
                 fetch('/loadUserRecipes', {
