@@ -86,9 +86,11 @@
                     if (recipe.usedIngredients) {
                         const usedIngredientsArray = recipe.usedIngredients.split(',').map(ingredient => ingredient.trim());
                         usedIngredientsArray.forEach(ingredient => {
-                            const usedIngredientItem = document.createElement('li');
-                            usedIngredientItem.textContent = ingredient;
-                            usedIngredientsElement.appendChild(usedIngredientItem);
+                            if(ingredient){
+                                const usedIngredientItem = document.createElement('li');
+                                usedIngredientItem.textContent = ingredient;
+                                usedIngredientsElement.appendChild(usedIngredientItem);
+                            }
                         });
                     }
 
@@ -100,9 +102,11 @@
                     if (recipe.unusedIngredients) {
                         const unusedIngredientsArray = recipe.unusedIngredients.split(',').map(ingredient => ingredient.trim());
                         unusedIngredientsArray.forEach(ingredient => {
-                            const unusedIngredientItem = document.createElement('li');
-                            unusedIngredientItem.textContent = ingredient;
-                            unusedIngredientsElement.appendChild(unusedIngredientItem);
+                            if(ingredient) {
+                                const unusedIngredientItem = document.createElement('li');
+                                unusedIngredientItem.textContent = ingredient;
+                                unusedIngredientsElement.appendChild(unusedIngredientItem);
+                            }
                         });
                     }
 
@@ -114,9 +118,11 @@
                     if (recipe.missedIngredients) {
                         const missedIngredientsArray = recipe.missedIngredients.split(',').map(ingredient => ingredient.trim());
                         missedIngredientsArray.forEach(ingredient => {
-                            const missedIngredientItem = document.createElement('li');
-                            missedIngredientItem.textContent = ingredient;
-                            missedIngredientsElement.appendChild(missedIngredientItem);
+                            if(ingredient) {
+                                const missedIngredientItem = document.createElement('li');
+                                missedIngredientItem.textContent = ingredient;
+                                missedIngredientsElement.appendChild(missedIngredientItem);
+                            }
                         });
                     }
 

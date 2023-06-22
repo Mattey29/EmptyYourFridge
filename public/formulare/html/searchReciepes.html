@@ -160,62 +160,58 @@
             button.style.backgroundColor = 'green';
         }
 
-            //-------------------------------------
+        let used_ingredient_string = "";
+        let missed_ingredient_string = ""
+        let unused_ingredient_string = "";
 
-            let used_ingredient_string = "";
-            let missed_ingredient_string = ""
-            let unused_ingredient_string = "";
+        if (recipe.usedIngredients) {
+            recipe.usedIngredients.forEach(ingredient => {
+                used_ingredient_string = used_ingredient_string + ingredient.name + ", ";
+            });
+        }
 
-            if (recipe.usedIngredients) {
-                recipe.usedIngredients.forEach(ingredient => {
-                    used_ingredient_string = used_ingredient_string + ingredient.name + ", ";
-                });
-            }
+        if (recipe.missedIngredients) {
+            recipe.missedIngredients.forEach(ingredient => {
+                missed_ingredient_string = missed_ingredient_string + ingredient.name + ", " ;
+            });
+        }
 
-            if (recipe.missedIngredients) {
-                recipe.missedIngredients.forEach(ingredient => {
-                    missed_ingredient_string = missed_ingredient_string + ingredient.name + ", " ;
-                });
-            }
+        if (recipe.unusedIngredients) {
+            recipe.unusedIngredients.forEach(ingredient => {
+                unused_ingredient_string = unused_ingredient_string + ingredient.name + ", " ;
+            });
+        }
 
-            if (recipe.unusedIngredients) {
-                recipe.unusedIngredients.forEach(ingredient => {
-                    unused_ingredient_string = unused_ingredient_string + ingredient.name + ", " ;
-                });
-            }
+        const data = {
+            title: recipe.title,
+            image: recipe.image,
+            used_ingredients: used_ingredient_string,
+            unused_ingredients: unused_ingredient_string,
+            missed_ingredients: missed_ingredient_string,
 
-            const data = {
-                title: recipe.title,
-                image: recipe.image,
-                used_ingredients: used_ingredient_string,
-                unused_ingredients: unused_ingredient_string,
-                missed_ingredients: missed_ingredient_string,
+        };
 
-            };
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
 
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            };
+        fetch('/save_recipe', requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Fehler beim POST-Request');
+            })
+            .then(data => {
 
-            fetch('/save_recipe', requestOptions)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Fehler beim POST-Request');
-                })
-                .then(data => {
-                    // Daten verarbeiten, die vom Server zurückgegeben wurden
-                    console.log(data);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
+            })
+            .catch(error => {
+                console.error(error);
+            });
         }
 
         async function searchRecipes(event) {
