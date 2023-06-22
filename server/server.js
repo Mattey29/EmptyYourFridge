@@ -439,25 +439,63 @@ function removeDietAll(apiUrl) {
     return apiUrl;
 }
 
+function generateDummyMoneyArray(length){
+    var dummyArray = [];
+
+    for (var i = 0; i < length; i++) {
+        var randomNumber = (Math.random() * (5.00 - 1.00) + 1.00).toFixed(2);
+        dummyArray.push(parseFloat(randomNumber));
+    }
+
+    return dummyArray;
+}
+
 app.get('/formulare/search_recipes', async (req, res) => {
-    let API_url = "https://api.spoonacular.com/recipes/";
-    const API_key = "6314fe6560054f0788f0b138cab27eef";
+
+    //++++++++++++++++  Recipes API +++++++++++++++++++++
+
+    let recipeAPI_url = "https://api.spoonacular.com/recipes/";
+    const recipeAPI_key = "6314fe6560054f0788f0b138cab27eef";
 
     const ingredients = req.query.ingredients;
     const diet = req.query.category;
     const maxAmountRecipes = "2";
 
-    API_url = API_url + "findByIngredients?apiKey=" + API_key + "&diet=" + diet + "&ingredients=" + ingredients + "&number=" + maxAmountRecipes + "&ranking=2";
+    recipeAPI_url = recipeAPI_url + "findByIngredients?apiKey=" + recipeAPI_key + "&diet=" + diet + "&ingredients=" + ingredients + "&number=" + maxAmountRecipes + "&ranking=2";
+    recipeAPI_url = removeDietAll(recipeAPI_url);
 
-    API_url = removeDietAll(API_url);
+    const recipeAPI_url_formatted = formatAPIString(recipeAPI_url);
+    let recipeApi_response = "";
 
-    const API_url_formatted = formatAPIString(API_url);
-    let api_response = "";
+    //++++++++++++++++  Currency API +++++++++++++++++++++
+
+    //https://v6.exchangerate-api.com/v6/d8723c08f72bbe7e8d54e8ea/pair/EUR/GBP
+
+    let currencyAPI_url = "https://v6.exchangerate-api.com/v6";
+    const currencyAPI_key = "d8723c08f72bbe7e8d54e8ea";
+    const fromCurrency = "USD";
+    const toCurrency = "EUR";
+
+    currencyAPI_url = currencyAPI_url + "/" + currencyAPI_key + "/pair" + "/" + fromCurrency + "/" + toCurrency;
+
+
 
     try {
-        const response = await axios.get(API_url_formatted);
-        api_response = response.data;
+        const recipeResponse = await axios.get(recipeAPI_url_formatted);
+        recipeApi_response = recipeResponse.data;
+
+        const currencyResponse = await axios.get(currencyAPI_url);
+        currencyApi_response = currencyResponse.data;
+
         const acceptHeader = req.headers['accept'];
+
+        dummyMoney = generateDummyMoneyArray(maxAmountRecipes);
+
+        const api_response = {
+            recipes: recipeApi_response,
+            currency: currencyApi_response,
+            savedMoney: dummyMoney,
+        };
 
         if (acceptHeader && acceptHeader.includes('application/xml')) {
             // Respond with XML
