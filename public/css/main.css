@@ -157,7 +157,7 @@ input[type="submit"]:hover, .submit-btn, .edit-btn, .delete-btn, .save-btn {
 .recipe{
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .recipe-content{
