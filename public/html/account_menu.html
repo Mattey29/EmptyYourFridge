@@ -95,6 +95,38 @@
                     });
             }
 
+            function sendUpdate(event) {
+                event.preventDefault();
+                const currentEmail = document.getElementById("currentUser").innerText;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                const data = {
+                    email: email,
+                    password: password,
+                };
+
+                fetch('/user/' + encodeURIComponent(currentEmail), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            window.alert("Ihr Konto wurde erfolgreich aktualisert.");
+                            window.location.href = "/public/html/account_menu.html";
+                        } else {
+                            throw new Error('Fehler beim Aktualisieren des Nutzers');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+
             fetch('/user', {
                 method: 'GET',
                 headers: {
@@ -112,7 +144,9 @@
                 .then(res_data => {
                     const email = res_data.email;
                     const currentUser = document.getElementById("currentUser");
+                    const emailField = document.getElementById("email");
                     currentUser.textContent = email;
+                    emailField.value = email;
                 })
                 .catch(error => {
                     console.error(error);
