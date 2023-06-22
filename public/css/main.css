@@ -41,6 +41,9 @@ body{
     grid-area: sidebar;
     background-color: #b1c0be;
     height: 100vh; /* Hinzugefügt */
+    position: fixed;
+    left:0;
+    top: 83px;
 }
 
 .sidebar ul {
@@ -100,7 +103,7 @@ body{
     color: #1b264f;
 }
 
-.input-form {
+.input-form, .recipe {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -136,13 +139,38 @@ body{
     margin-right: 25px;
 }
 
-input[type="submit"], .submit-btn{
+input[type="submit"], .submit-btn, .edit-btn, .delete-btn, .save-btn{
     background-color: #1b264f;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease-in-out;
 }
 
-input[type="submit"]:hover, .submit-btn {
+input[type="submit"]:hover, .submit-btn, .edit-btn, .delete-btn, .save-btn {
     background-color: #1b264f;
+}
+
+.delete-btn{
+    background-color: #81223F !important;
+}
+
+.recipe{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.recipe-content{
+    display: flex;
+    flex-direction: row;
+    margin: 18px 0px;
+}
+
+.recipe-content-img > img{
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.1);
+}
+
+.recipe-content-ingredients > ul > li{
+    margin-left: 35px;
 }
