@@ -16,6 +16,15 @@ function sendData(event) {
         password: password,
     };
 
+    var response = grecaptcha.getResponse();
+    if (response.length === 0) {
+        // Display an error message
+        alert("Please complete the reCAPTCHA.");
+        return false;
+    }
+
+    else{
+
     fetch('/formulare/register', {
         method: 'POST',
         headers: {
@@ -41,4 +50,5 @@ function sendData(event) {
         .catch(error => {
             console.error(error);
         });
+    }
 }

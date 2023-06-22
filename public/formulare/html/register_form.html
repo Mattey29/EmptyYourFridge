@@ -6,8 +6,10 @@
         <link rel="icon" href="/public/images/icons/favicon1-16x16.png" type="image/x-icon">
         <link rel="stylesheet" href="/public/css/login_form.css">
         <script src="/public/formulare/js/register_form.js" defer></script>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </head>
     <body>
+
         <div class="top-bar">
             <img src="/public/images/logo.png" alt="logo" class="logo">
             <h2 onclick="window.location.href='http://localhost:3000/public/html/index.html'">EmptyYourFridge</h2>
@@ -34,7 +36,7 @@
                            oninput="setCustomValidity('')">
                     <span style="font-size: 12px; color: gray; display: block; margin-top: 5px;">*mindestens 6 Zeichen</span>
                 </div>
-
+                <div class="g-recaptcha" data-sitekey="6Lcwp70mAAAAAKJvin89_9KpxD0Umz7W1eRPZz_m"></div>
                 <input type="submit" value="Registrieren">
 
                 <div id="error-container"></div> <!-- Fehlercontainer -->
