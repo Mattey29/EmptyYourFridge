@@ -11,23 +11,23 @@
 <body>
 <aside class="sidebar">
     <ul>
-        <li><a href="/public/formulare/html/searchReciepes.html" class="font-white">Search Recipes</a></li>
-        <li><a href="/public/html/savedRecipes.html" class="font-white">Saved Recipes</a></li>
-        <li><a href="/public/html/account_menu.html" class="font-white">Account Settings</a></li>
-        <li><a href="#" class="font-white" onclick="logout()">Log Out</a></li>
+        <li><a href="/public/formulare/html/searchReciepes.html" class="font-white"><i class="fas fa-search"></i> Search Recipes</a></li>
+        <li><a href="/public/html/savedRecipes.html" class="font-white"><i class="fas fa-save"></i> Saved Recipes</a></li>
+        <li><a href="/public/html/account_menu.html" class="font-white"><i class="fas fa-cog"></i> Account Settings</a></li>
+        <li><a href="#" class="font-white" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
     </ul>
 </aside>
-
 
 <div class="top-bar d-flex align-items-center p-2">
     <img src="/public/images/logo.png" alt="logo" class="logo">
     <h2 class="title_tb" onclick="window.location.href='http://localhost:3000/public/html/index.html'" class="cursor-pointer">EmptyYourFridge</h2>
-    <div class="user_div" onclick="window.location.href='/public/html/account_menu.html';">User: <span id="currentUser"></span></div>
+    <div class="user_div cursor-pointer" onclick="window.location.href='/public/html/account_menu.html';"><i class="fas fa-user-circle"></i><span id="currentUser"></span></div>
 </div>
 
 <div class="container">
+    <h2 class="input-form my-4">Search Recipes</h2>
     <form id="searchRecipes" class="input-form mt-3" method="GET">
-        <h1 class="my-4">Search Recipes</h1>
+
         <div class="mb-3">
             <label for="ingredients" class="form-label">Ingredients:</label>
             <input type="text" id="ingredients" name="ingredients" class="form-control" pattern="^(?!^,)(?!.*,,)[a-zA-Z\s,]+$" placeholder="Enter ingredients separated by commas">
@@ -49,37 +49,38 @@
 
     <div id="recipes-container"></div>
 </div>
-
-
-
-
 <script>
 
-
-    //------------------------------------------------------------
-
-/*
-    fetch(`/search_recipes?${params.toString()}`, {
-        method: 'GET',
-    })
-*/
     const saveButtons = [];
 
-    function displayRecipes(recipes) {
-            if (!Array.isArray(recipes)) {
-                console.error('Recipes is not an array');
-                return;
-            }
+    function displayRecipes(data) {
+        if (!data || !Array.isArray(data.recipes)) {
+            console.error('data.recipes is not an array');
+            return;
+        }
+
+        const recipes = data.recipes;
 
         const container = document.querySelector('#recipes-container');
         container.innerHTML = '';
 
-        recipes.forEach(recipe => {
+        const i = 0;
+
+        recipes.forEach((recipe, index) => {
             const recipeElement = document.createElement('div');
             recipeElement.classList.add('recipe');
 
             const titleElement = document.createElement('h2');
             titleElement.textContent = recipe.title;
+
+            const recipeContentElement = document.createElement('div');
+            recipeContentElement.classList.add('recipe-content');
+
+            const recipeContentImageElement = document.createElement('div');
+            recipeContentImageElement.classList.add('recipe-content-img');
+
+            const recipeContentIngredientsElement = document.createElement('div');
+            recipeContentIngredientsElement.classList.add('recipe-content-ingredients');
 
             const imageElement = document.createElement('img');
             imageElement.src = recipe.image;
@@ -125,9 +126,22 @@
                 });
             }
 
+
+
+            const moneyUSD = data.savedMoney[index];
+            const conversionRate = data.currency.conversion_rate;
+
+            const moneyEUR = moneyUSD * conversionRate;
+            const moneyEURfixed = moneyEUR.toFixed(2);
+
+            const saved_money = document.createElement('p');
+            saved_money.textContent = `${moneyUSD} USD | ${moneyEURfixed} EUR`;
+
             const save_button = document.createElement('button');
             save_button.textContent = 'Save Recipe';
             save_button.addEventListener('click', (event) => saveRecipe(event, recipe));
+            save_button.classList.add('save-btn');
+            save_button.classList.add('custom-input');
 
             // Eindeutige ID für den Button generieren
             const buttonId = `save_button_${Date.now()}`;
@@ -137,16 +151,20 @@
             saveButtons[buttonId] = save_button.textContent;
 
             recipeElement.appendChild(titleElement);
-            recipeElement.appendChild(imageElement);
-            recipeElement.appendChild(usedIngredientsElement);
-            recipeElement.appendChild(unusedIngredientsElement);
-            recipeElement.appendChild(missedIngredientsElement);
+            recipeContentImageElement.appendChild(imageElement);
+            recipeContentIngredientsElement.appendChild(usedIngredientsElement);
+            recipeContentIngredientsElement.appendChild(unusedIngredientsElement);
+            recipeContentIngredientsElement.appendChild(missedIngredientsElement);
+            recipeContentIngredientsElement.appendChild(saved_money);
+            recipeContentElement.appendChild(recipeContentImageElement);
+            recipeContentElement.appendChild(recipeContentIngredientsElement);
+            recipeElement.appendChild(recipeContentElement);
             recipeElement.appendChild(save_button);
             container.appendChild(recipeElement);
         });
     }
 
-async function saveRecipe(event, recipe) {
+    async function saveRecipe(event, recipe) {
 
         event.preventDefault();
 
@@ -158,64 +176,59 @@ async function saveRecipe(event, recipe) {
         button.style.backgroundColor = 'green';
     }
 
-        //-------------------------------------
+    let used_ingredient_string = "";
+    let missed_ingredient_string = ""
+    let unused_ingredient_string = "";
 
-        let used_ingredient_string = "";
-        let missed_ingredient_string = ""
-        let unused_ingredient_string = "";
-
-        if (recipe.usedIngredients) {
-            recipe.usedIngredients.forEach(ingredient => {
-                used_ingredient_string = used_ingredient_string + ingredient.name + ", ";
-            });
-        }
-
-        if (recipe.missedIngredients) {
-            recipe.missedIngredients.forEach(ingredient => {
-                missed_ingredient_string = missed_ingredient_string + ingredient.name + ", " ;
-            });
-        }
-
-        if (recipe.unusedIngredients) {
-            recipe.unusedIngredients.forEach(ingredient => {
-                unused_ingredient_string = unused_ingredient_string + ingredient.name + ", " ;
-            });
-        }
-
-        const data = {
-            title: recipe.title,
-            image: recipe.image,
-            used_ingredients: used_ingredient_string,
-            unused_ingredients: unused_ingredient_string,
-            missed_ingredients: missed_ingredient_string,
-
-        };
-
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-
-        fetch('/save_recipe', requestOptions)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Fehler beim POST-Request');
-            })
-            .then(data => {
-                // Daten verarbeiten, die vom Server zurückgegeben wurden
-                console.log(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
+    if (recipe.usedIngredients) {
+        recipe.usedIngredients.forEach(ingredient => {
+            used_ingredient_string = used_ingredient_string + ingredient.name + ", ";
+        });
     }
 
+    if (recipe.missedIngredients) {
+        recipe.missedIngredients.forEach(ingredient => {
+            missed_ingredient_string = missed_ingredient_string + ingredient.name + ", " ;
+        });
+    }
+
+    if (recipe.unusedIngredients) {
+        recipe.unusedIngredients.forEach(ingredient => {
+            unused_ingredient_string = unused_ingredient_string + ingredient.name + ", " ;
+        });
+    }
+
+    const data = {
+        title: recipe.title,
+        image: recipe.image,
+        used_ingredients: used_ingredient_string,
+        unused_ingredients: unused_ingredient_string,
+        missed_ingredients: missed_ingredient_string,
+
+    };
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+
+    fetch('/save_recipe', requestOptions)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Fehler beim POST-Request');
+        })
+        .then(data => {
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
 
     async function searchRecipes(event) {
         event.preventDefault();
@@ -241,10 +254,6 @@ async function saveRecipe(event, recipe) {
             console.error(error);
         }
     }
-
-
-
-    //------------------------------------------------------------
 
     fetch('/user', {
         method: 'GET',
