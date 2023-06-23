@@ -89,3 +89,18 @@ input[type="submit"]:hover {
     color: darkred;
     font-style: italic;
 }
+
+.pw-requirements{
+    font-size: 12px;
+    color: gray;
+    display: block;
+    margin: -15px 0 30px 0;
+}
+
+.pw-input-wrapper{
+    position:relative;
+}
+
+.g-recaptcha{
+    margin: 20px 0;
+}

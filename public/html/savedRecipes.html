@@ -28,31 +28,6 @@
             <div id="recipes-container" class="recipes-container"></div>
         </div>
         <script>
-            window.onload = loadRecipes();
-
-            fetch('/user', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
-                    }
-                })
-                .then(res_data => {
-                    const email = res_data.email;
-                    const currentUser = document.getElementById("currentUser");
-                    currentUser.textContent = email;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
             function displayRecipes(res_data) {
                 // Zugriff auf die Rezeptdaten
                 const recipes = res_data.recipes;
@@ -149,7 +124,6 @@
                         newPicture(recipe);
                     });
 
-
                     recipeElement.appendChild(titleElement);
                     recipeContentImageElement.appendChild(imageElement);
                     recipeContentIngredientsElement.appendChild(usedIngredientsElement);
@@ -200,7 +174,6 @@
                 
             }
 
-
             function loadRecipes(){
                 fetch('/loadUserRecipes', {
                     method: 'GET',
@@ -223,8 +196,8 @@
                         console.error(error);
                     });
             }
-
         </script>
-        <script src="/public/user_account/logout.js"></script>
+        <script src="/public/js/logout.js" defer></script>
+        <script src="/public/js/onload.js" defer></script>
     </body>
 </html>

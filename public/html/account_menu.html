@@ -125,34 +125,8 @@
                     });
             }
 
-            fetch('/user', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Fehler beim Abrufen der E-Mail-Adresse');
-                    }
-                })
-                .then(res_data => {
-                    const email = res_data.email;
-                    const currentUser = document.getElementById("currentUser");
-                    const emailField = document.getElementById("email");
-                    currentUser.textContent = email;
-                    emailField.value = email;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-
         </script>
-
-        <script src="/public/user_account/logout.js"></script>
-
+        <script src="/public/js/logout.js" defer></script>
+        <script src="/public/js/onload.js" defer></script>
     </body>
 </html>

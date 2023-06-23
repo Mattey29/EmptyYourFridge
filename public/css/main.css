@@ -2,7 +2,7 @@ body{
     margin: 0;
     display: grid;
     background-color: #eaf2ef;
-    grid-template-columns: 20% auto;
+    grid-template-columns: 215px auto;
     grid-auto-rows: 62px auto;
     grid-template-areas:
         "top top"
@@ -157,7 +157,7 @@ input[type="submit"]:hover, .submit-btn, .edit-btn, .delete-btn, .save-btn {
 .recipe{
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .recipe-content{
