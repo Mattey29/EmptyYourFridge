@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("loaded;");
     fetch('/user', {
         method: 'GET',
         headers: {
@@ -15,9 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(res_data => {
-            const email = res_data.email;
-            const currentUser = document.getElementById("currentUser");
-            currentUser.textContent = email;
+            if (window.location.pathname === '/public/html/account_menu.html') {
+                const email = res_data.email;
+                const currentUser = document.getElementById("currentUser");
+                const emailField = document.getElementById("email");
+                currentUser.textContent = email;
+                emailField.value = email;
+            } else {
+                const email = res_data.email;
+                const currentUser = document.getElementById("currentUser");
+                currentUser.textContent = email;
+            }
+
         })
         .catch(error => {
             console.error(error);

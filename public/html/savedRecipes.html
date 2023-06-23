@@ -28,6 +28,8 @@
             <div id="recipes-container" class="recipes-container"></div>
         </div>
         <script>
+            loadRecipes();
+
             function displayRecipes(res_data) {
                 // Zugriff auf die Rezeptdaten
                 const recipes = res_data.recipes;
