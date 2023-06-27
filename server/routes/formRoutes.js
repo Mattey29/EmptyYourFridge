@@ -319,22 +319,9 @@ router.patch('/picture_upload', upload.single('Image'), function (req, res, next
     if (!file) {
         res.status(400).send('Es wurde keine Datei hochgeladen.');
     }
+
     else {
-
-        const filename = req.file.filename;
-        const userEmail = req.body.userEmail;
         const sessionIdCookie = req.cookies.session_id;
-
-        const uploadPath = './second_frontend_component/CloudStorage/' + userEmail;
-
-        // Überprüfen, ob das Verzeichnis bereits existiert
-        if (!fs.existsSync(uploadPath)) {
-            // Verzeichnis erstellen, falls es nicht existiert
-            fs.mkdirSync(uploadPath);
-        }
-
-        const newPath = uploadPath + '/' + file.filename;
-        fs.renameSync(file.path, newPath);
 
         db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
             const acceptHeader = req.headers['accept'];
@@ -356,6 +343,19 @@ router.patch('/picture_upload', upload.single('Image'), function (req, res, next
                 }
             } else {
                 let userId = user.id;
+
+                const filename = req.file.filename;
+
+                const uploadPath = './second_frontend_component/CloudStorage/' + userId;
+
+                // Überprüfen, ob das Verzeichnis bereits existiert
+                if (!fs.existsSync(uploadPath)) {
+                    // Verzeichnis erstellen, falls es nicht existiert
+                    fs.mkdirSync(uploadPath);
+                }
+
+                const newPath = uploadPath + '/' + file.filename;
+                fs.renameSync(file.path, newPath);
 
                 db.addPictureToCloud(connection, userId, filename, (error, user) => {
                     const acceptHeader = req.headers['accept'];
@@ -391,6 +391,67 @@ router.patch('/picture_upload', upload.single('Image'), function (req, res, next
         });
 
     }
+});
+
+//++++++++++++++++++++++++++++++++++++++++++++++ CLOUD STORAGE PICTURE GETTING +++++++++++++++++++++++++++++++++++++++++++++
+
+router.get('/loadUserImages', (req, res) => {
+    const sessionIdCookie = req.cookies.session_id;
+
+    db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+        const acceptHeader = req.headers['accept'];
+
+        if (error) {
+            const errorMessage = {
+                message: 'Error retrieving user',
+                error: error,
+            };
+
+            if (acceptHeader && acceptHeader.includes('application/xml')) {
+                // Respond with XML
+                const xmlResponse = generateXMLResponse(errorMessage);
+                res.set('Content-Type', 'application/xml');
+                res.status(500).send(xmlResponse);
+            } else {
+                // Respond with JSON
+                res.status(500).json(errorMessage);
+            }
+        } else {
+            let user_id = user.id;
+            db.getAllUserImages(connection, user_id, (error, images) => {
+                if (error) {
+                    const errorMessage = {
+                        message: 'Error retrieving recipes',
+                        error: error,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(errorMessage);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(500).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(500).json(errorMessage);
+                    }
+                } else {
+                    const responseData = {
+                        images: images,
+                    };
+
+                    if (acceptHeader && acceptHeader.includes('application/xml')) {
+                        // Respond with XML
+                        const xmlResponse = generateXMLResponse(responseData);
+                        res.set('Content-Type', 'application/xml');
+                        res.status(200).send(xmlResponse);
+                    } else {
+                        // Respond with JSON
+                        res.status(200).json(responseData);
+                    }
+                }
+            });
+        }
+    });
 });
 
 module.exports = router;

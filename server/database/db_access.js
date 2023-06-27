@@ -229,6 +229,21 @@ function addPictureToCloud(connection, userId, filename, callback){
     });
 }
 
+function getAllUserImages(connection, user_id, callback) {
+    const query = `SELECT * FROM cloudstorage WHERE userId = '${user_id}'`;
+    // Parameter für die SQL-Abfrage
+    const params = [user_id];
+
+    // Ausführen der SQL-Abfrage
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, results);
+        }
+    });
+}
+
 
 module.exports = {
     createUser,
@@ -244,6 +259,8 @@ module.exports = {
     deleteUserRecipe,
     updateUserRecipe,
     checkIfRecipeAlreadySaved,
+
     addPicture,
     addPictureToCloud,
+    getAllUserImages,
 };
