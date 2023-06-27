@@ -79,6 +79,11 @@ body{
     cursor: pointer;
 }
 
+.profilePictureClass {
+    max-width: 70px; /* Maximale Breite des Bildes auf 200 Pixel festlegen */
+    max-height: 70px; /* Maximale Höhe des Bildes auf 150 Pixel festlegen */
+}
+
 #currentUser{
     font-size: 18px;
     font-style: italic;
@@ -127,6 +132,10 @@ body{
 
 .delete-account{
     background-color: #81223F !important;
+}
+
+.upload-picture{
+    background-color: forestgreen !important;
 }
 
 #error-container{

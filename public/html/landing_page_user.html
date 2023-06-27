@@ -20,8 +20,11 @@
         </aside>
         <div class="top-bar d-flex align-items-center p-2">
             <img src="/public/images/logo.png" alt="logo" class="logo">
-            <h2 class="title_tb cursor-pointer" onclick="window.location.href='http://localhost:3000/public/html/index.html'">EmptyYourFridge</h2>
-            <div class="user_div cursor-pointer" onclick="window.location.href='/public/html/account_menu.html';"><i class="fas fa-user-circle"></i><span id="currentUser"></span></div>
+            <h2 class="title_tb" onclick="window.location.href='http://localhost:3000/public/html/index.html'" class="cursor-pointer">EmptyYourFridge</h2>
+            <div class="user_div cursor-pointer" onclick="window.location.href='/public/html/account_menu.html';">
+                <img id="profilePicture" class="profilePictureClass" src="">
+                <span id="currentUser"></span>
+            </div>
         </div>
         <div class="container py-5">
             <h1 class="text-center ">Successful login!</h1>

@@ -18,9 +18,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 const email = res_data.email;
                 const currentUser = document.getElementById("currentUser");
                 const emailField = document.getElementById("email");
+
+                const profilePictureElement = document.getElementById("profilePicture");
+                const profilePictureName = res_data.profilePicture;
+                if(profilePictureName == null){
+                    profilePictureElement.src = "/public/profile_pictures/standard.png";
+                }
+                else{
+                    profilePictureElement.src = "/public/profile_pictures/" + profilePictureName;
+                }
+
                 currentUser.textContent = email;
                 emailField.value = email;
             } else {
+
+                const profilePictureElement = document.getElementById("profilePicture");
+                const profilePictureName = res_data.profilePicture;
+                if(profilePictureName == null){
+                    profilePictureElement.src = "/public/profile_pictures/standard.png";
+                }
+                else{
+                    profilePictureElement.src = "/public/profile_pictures/" + profilePictureName;
+                }
+
                 const email = res_data.email;
                 const currentUser = document.getElementById("currentUser");
                 currentUser.textContent = email;

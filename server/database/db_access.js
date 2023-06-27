@@ -196,6 +196,22 @@ function checkIfRecipeAlreadySaved(connection, user_id, title, callback) {
     });
 }
 
+function addPicture(connection, userEmail, filename, callback){
+    const query = `UPDATE user SET profilePicture = '${filename}' WHERE email = '${userEmail}'`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            if (results.affectedRows === 0) {
+                callback(new Error('No user found with that email'));
+            } else {
+                callback(null);
+            }
+        }
+    });
+}
+
 
 module.exports = {
     createUser,
@@ -211,4 +227,5 @@ module.exports = {
     deleteUserRecipe,
     updateUserRecipe,
     checkIfRecipeAlreadySaved,
+    addPicture,
 };
