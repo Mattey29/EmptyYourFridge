@@ -69,7 +69,11 @@
     })
             .then(response => response.json())
             .then(data => {
-              console.log('Profilbild erfolgreich hochgeladen:', data);
+              console.log('Image erfolgreich hochgeladen:', data);
+              // Wechsel zu einem anderen Link
+              alert("Image erfolgreich hochgeladen");
+              window.location.href = "http://localhost:3000/second_frontend_component/formulare/html/picture_upload.html";
+
               // Hier kannst du entsprechende Aktionen nach dem Hochladen des Profilbilds durchführen
             })
             .catch(error => {

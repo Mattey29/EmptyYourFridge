@@ -70,6 +70,8 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Profilbild erfolgreich hochgeladen:', data);
+                alert("Profilbild erfolgreich hochgeladen");
+                window.location.href = "http://localhost:3000/public/html/account_menu_upload_pp.html";
                 // Hier kannst du entsprechende Aktionen nach dem Hochladen des Profilbilds durchführen
             })
             .catch(error => {
