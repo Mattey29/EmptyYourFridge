@@ -5,6 +5,7 @@ const db = require("../database/db_access");
 const {generateXMLResponse, generateDummyMoneyArray, removeDietAll, formatAPIString} = require("../utilities");
 const axios = require("axios");
 const connection = require("../database/connection");
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -292,6 +293,103 @@ router.get('/search_recipes', async (req, res) => {
             // Respond with JSON
             res.status(500).json(errorMessage);
         }
+    }
+});
+
+//+++++++++++++++++++++++++++++++++++++++++++++ PICTURE UPLOAD (2FE) ++++++++++++++++++++++++++++++++++++++++++++++++
+
+const multer = require('multer');
+
+// Konfiguration für den Dateiupload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './second_frontend_component/CloudStorage/'); // Speicherort für die hochgeladenen Dateien
+    },
+    filename: function (req, file, cb) {
+        const random = crypto.randomBytes(4).toString('hex');
+        cb(null, Date.now() + '-' + random + '.png'); // Dateiname speichern (z.B. timestamp-profilePicture)
+    }
+});
+
+// Middleware für den Dateiupload
+const upload = multer({ storage: storage });
+router.patch('/picture_upload', upload.single('Image'), function (req, res, next) { //das Formularfeld mit 'profileImage' enthält das bild!
+    // Der Dateiupload wurde erfolgreich durchgeführt
+    const file = req.file;
+    if (!file) {
+        res.status(400).send('Es wurde keine Datei hochgeladen.');
+    }
+    else {
+
+        const filename = req.file.filename;
+        const userEmail = req.body.userEmail;
+        const sessionIdCookie = req.cookies.session_id;
+
+        const uploadPath = './second_frontend_component/CloudStorage/' + userEmail;
+
+        // Überprüfen, ob das Verzeichnis bereits existiert
+        if (!fs.existsSync(uploadPath)) {
+            // Verzeichnis erstellen, falls es nicht existiert
+            fs.mkdirSync(uploadPath);
+        }
+
+        const newPath = uploadPath + '/' + file.filename;
+        fs.renameSync(file.path, newPath);
+
+        db.getIdByCookie(connection, sessionIdCookie, (error, user) => {
+            const acceptHeader = req.headers['accept'];
+
+            if (error) {
+                const errorMessage = {
+                    message: 'Error retrieving user',
+                    error: error,
+                };
+
+                if (acceptHeader && acceptHeader.includes('application/xml')) {
+                    // Respond with XML
+                    const xmlResponse = generateXMLResponse(errorMessage);
+                    res.set('Content-Type', 'application/xml');
+                    res.status(500).send(xmlResponse);
+                } else {
+                    // Respond with JSON
+                    res.status(500).json(errorMessage);
+                }
+            } else {
+                let userId = user.id;
+
+                db.addPictureToCloud(connection, userId, filename, (error, user) => {
+                    const acceptHeader = req.headers['accept'];
+                    if (error) {
+                        const errorMessage = {
+                            message: 'Error adding Image',
+                            error: error,
+                        };
+
+                        if (acceptHeader && acceptHeader.includes('application/xml')) {
+                            // Respond with XML
+                            const xmlResponse = generateXMLResponse(errorMessage);
+                            res.set('Content-Type', 'application/xml');
+                            res.status(500).send(xmlResponse);
+                        } else {
+                            // Respond with JSON
+                            res.status(500).json(errorMessage);
+                        }
+                    } else {
+                        if (acceptHeader && acceptHeader.includes('application/xml')) {
+                            // Respond with XML
+                            const xmlResponse = generateXMLResponse({ message: 'Image added Successfully' });
+                            res.set('Content-Type', 'application/xml');
+                            res.status(204).send(xmlResponse); // Send 204 (No Content)
+                        } else {
+                            // Respond with JSON
+                            res.status(200).json("Success"); // Send 204 (No Content)
+                        }
+                    }
+                })
+
+            }
+        });
+
     }
 });
 

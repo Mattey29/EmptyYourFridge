@@ -212,6 +212,23 @@ function addPicture(connection, userEmail, filename, callback){
     });
 }
 
+function addPictureToCloud(connection, userId, filename, callback){
+
+    const query = `INSERT INTO cloudstorage (userId, imageName) VALUES ('${userId}', '${filename}')`;
+
+    connection.query(query, (error, results, fields) => {
+        if (error) {
+            callback(error);
+        } else {
+            if (results.affectedRows === 0) {
+                callback(new Error('No user found with that email'));
+            } else {
+                callback(null);
+            }
+        }
+    });
+}
+
 
 module.exports = {
     createUser,
@@ -228,4 +245,5 @@ module.exports = {
     updateUserRecipe,
     checkIfRecipeAlreadySaved,
     addPicture,
+    addPictureToCloud,
 };

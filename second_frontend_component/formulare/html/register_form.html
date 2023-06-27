@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Storage</title>
+  <link rel="icon" href="/public/images/icons/cloud_favicon-16x16.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" href="/public/css/login_form.css">
+  <script src="/second_frontend_component/formulare/js/register_form.js" defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+
+<div class="top-bar">
+  <img src="/public/images/2fe_logo.png" alt="logo" class="logo">
+  <h2 onclick="window.location.href='http://localhost:3000/second_frontend_component/main.html'">Cloud Storage</h2>
+</div>
+<div class="content">
+  <h1>Registrierung</h1>
+  <form id="registrationForm" method="POST" class="input-form" onsubmit="sendData(event)">
+
+    <label for="email" class="form-label">E-Mail:</label>
+    <input type="email" id="email" name="email" class="custom-input" placeholder="Ihre E-Mail-Adresse" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+           oninvalid="setCustomValidity('Geben Sie eine gültige E-Mail-Adresse ein')"
+           oninput="setCustomValidity('')">
+
+    <label for="password" class="form-label">Passwort:</label>
+    <div class="pw-input-wrapper">
+      <input type="password" id="password" name="password" class="custom-input" placeholder="Ihr Passwort" required pattern=".{6,}"
+             oninvalid="setCustomValidity('Das Passwort muss mindestens 6 Zeichen lang sein')"
+             oninput="setCustomValidity('')">
+      <span class="pw-requirements">*mindestens 6 Zeichen</span>
+    </div>
+    <div class="pw-input-wrapper">
+      <input type="password" id="password_confirm" name="password_confirm" class="custom-input" placeholder="Ihr Passwort wiederholen" required pattern=".{6,}"
+             oninvalid="setCustomValidity('Das Passwort muss mindestens 6 Zeichen lang sein')"
+             oninput="setCustomValidity('')">
+      <span class="pw-requirements">*mindestens 6 Zeichen</span>
+    </div>
+    <div class="g-recaptcha" data-sitekey="6Lcwp70mAAAAAKJvin89_9KpxD0Umz7W1eRPZz_m"></div>
+    <input type="submit" value="Registrieren">
+
+    <div id="error-container"></div> <!-- Fehlercontainer -->
+  </form>
+</div>
+</body>
+</html>

@@ -22,7 +22,7 @@ function sendData(event) {
                 document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; //alten cookie löschen, indem man ihn expiren lässt
                 const cookie = response.headers.get('Set-Cookie');
                 document.cookie = cookie; // Cookie setzen
-                window.location.href = "/public/html/landing_page_user.html";
+                window.location.href = "/second_frontend_component/html/landing_page_user.html";
             } else if (response.status === 401) {
                 throw new Error("Benutzer nicht gefunden.");
             } else {
