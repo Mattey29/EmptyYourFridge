@@ -31,3 +31,6 @@ CREATE TABLE `cloudstorage` (
   KEY `userId` (`userId`),
   CONSTRAINT `cloudstorage_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
 );
+
+Wenn user Table schon existiert, aber noch keine profilePicture Spalte vorhanden ist:
+Alter Table -> `profilePicture` varchar(255) DEFAULT NULL,
